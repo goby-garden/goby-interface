@@ -4,7 +4,7 @@ This repo will be used to develop Goby’s graphic user interface (built with Sv
  
 The interface receives data from and sends commands to [goby-database](https://github.com/goby-garden/goby-database), which accesses and manipulates goby’s `.db` project files using SQLite.
 
-Publishing the Goby interface on the web is pending; it’s technically possible because I’m building it with Sveltekit, because the library used by goby-database ([better-sqlite3](https://github.com/WiseLibs/better-sqlite3)) is node-based, and I will have to adapt it to use something like [sqljs](https://github.com/sql-js/sql.js) so you can edit databases in the browser. But I may also do something like Jupyter notebook, where you can initiate the application from terminal and use it in a browser tab. 
+Publishing the Goby interface on the web is pending; it’s technically possible because I’m building it with Sveltekit, but the library used by goby-database ([better-sqlite3](https://github.com/WiseLibs/better-sqlite3)) is node-based, so I will have to adapt it to use something like [sqljs](https://github.com/sql-js/sql.js) so you can edit databases in the browser. But I may also do something like Jupyter notebook, where you can initiate the application from terminal and use it in a browser tab. 
 
 Repo contents:
 
