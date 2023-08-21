@@ -11,7 +11,7 @@ Repo contents:
 - **`root`**: 
     - this `readme` and `notes.md`, a file for taking notes as I work.
     - **`src`**: contains all the code for Electron and the interface
-        - `background.js` is Electron’s main file for managing and configuring application windows. For development, it simply connects to theHMR localhost server created by Vite. For deployment, it loads the static html/css/js from the `_dist` folder 
+        - `background.js` is Electron’s main file for managing and configuring application windows. For development, it simply connects to the HMR localhost server created by Vite. For deployment, it loads the static html/css/js from the `_dist` folder 
         - `preload.js` is an Electron preload script. It exposes endpoints for the front-end interface to communicate with `background.js` and make modifications to the project file.
         - **`renderer`**: the root folder for Sveltekit (normally called src), with Sveltekit’s [basic project structure](https://kit.svelte.dev/docs/project-structure)
     - config files for sveltekit vite (used by sveltekit under the hood), and other Sveltekit defaults beyond my comprehension
