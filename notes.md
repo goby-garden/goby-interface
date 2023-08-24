@@ -1,5 +1,11 @@
-Using this file similarly to [goby-database/notes](https://github.com/goby-garden/goby-database/blob/main/notes.md) to record thoughts and ideas about goby’s interface design/dev in the same file as the project.
+### Present to-do*:
 
+- start setting up basic table and [window structure](https://www.are.na/block/23294643) using the [Authentic Sans](https://www.are.na/block/23282741) designs I’ve been working through, even if these are basically temporary/WIP
+- start setting up the logic to store, represent and modify data with the Svelte `store` in communication with the back-end
+- continue considering the mechanics of different interactions, particularly the creation and modification of relation properties
+
+
+_*occasionally outdated/bypassed_
 
 ---
 
