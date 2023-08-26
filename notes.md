@@ -48,8 +48,6 @@ Step 1 in addressing that was re-compiling the node-module for Electron’s node
 
 However, after resolving that, I started running into an issue with Electron crashing as soon as I ran any commands with `better-sqlite3`. This turned out to be [brand new bug](https://github.com/WiseLibs/better-sqlite3/issues/1044) as of writing this, and to fix it the maintainers recommended running
 
-This also meant that ultimately I couldn’t just use `npm link` to install the `goby-database` code. But instead of just copying it over (which I did last time, ensuing in all sorts of confusions and problems), I just went ahead and published the WIP to npm, and then installed it into the `goby-interface` repo.
-
 ```
 npm install
 cd node_modules/better-sqlite3
@@ -60,7 +58,7 @@ npm run start
 
 to manually rebuild the module binary, which seems to have worked for me.
 
-
+This also meant that ultimately I couldn’t just use `npm link` to install the `goby-database` code. But instead of just copying it over (which I did last time, ensuing in all sorts of confusions and problems), I just went ahead and published the WIP to npm, and then installed it into the `goby-interface` repo.
 
 ```
 npm install
