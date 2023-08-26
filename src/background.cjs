@@ -1,16 +1,25 @@
 // This file is the entry point for the Electron application
 const path = require('path');
+const Database = require('better-sqlite3');
 const Project = require('goby-database');
 console.log(Project);
 
-const { app, BrowserWindow,ipcMain } = require('electron')
+
+let project;
+
+const { app, BrowserWindow,ipcMain,Menu,dialog } = require('electron')
 
 // .on('set-title', handleSetTitle)
 
 function create_window() {
   const win = new BrowserWindow({
-    width: 1100,
-    height: 800,
+    // 540
+    width: 540,
+    height: 150,
+    minWidth:540,
+    minHeight:150,
+    titleBarStyle: 'hidden',
+    trafficLightPosition: { x: 10, y: 8 },
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       sandbox:false,
@@ -24,12 +33,54 @@ function create_window() {
   } else {
         // Load vite dev server page 
         console.log('Development mode')
-        win.webContents.openDevTools();
+        // win.webContents.openDevTools();
         win.loadURL('http://localhost:5173/')
   }
-
-  ipcMain.on('send_message', receive_message);
+ 
 }
+
+ipcMain.handle('open_dialog', async function(event,action){
+  // console.log(event.sender,type);
+  let dialog_output;
+
+  switch(action){
+    case 'save':
+      dialog_output=dialog.showSaveDialogSync({
+        title:'Choose the name and save location for your project',
+        // message:'Choose the name and location for your project',
+        buttonLabel:'Create',
+        nameFieldLabel:'Project name:',
+        properties:[
+          'showOverwriteConfirmation'
+        ]
+      },event.sender)
+      dialog_output=dialog_output?.replace(/\.[^/.]+$/,'');
+      if(dialog_output) dialog_output=dialog_output+'.db';
+    break;
+    case 'locate file':
+      dialog_output=dialog.showOpenDialogSync({filters:[
+        { name: 'Custom File Type', extensions: ['db'] }
+      ]},event.sender)
+      
+      if(dialog_output) dialog_output=dialog_output[0]
+    break;
+  }
+
+  
+
+  
+
+  return dialog_output;
+});
+
+ipcMain.handle('open_project', async function(event,file_path){
+  // console.log(event.sender,type);
+  project=new Project(file_path)
+
+  
+  
+  // return dialog_output;
+});
 
 app.whenReady()
   .then(() => {
@@ -45,6 +96,3 @@ app.on('window-all-closed', function () {
 })
 
 
-function receive_message(event,msg){
-  console.log(msg);
-}
