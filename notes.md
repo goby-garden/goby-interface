@@ -59,11 +59,3 @@ npm run start
 to manually rebuild the module binary, which seems to have worked for me.
 
 This also meant that ultimately I couldn’t just use `npm link` to install the `goby-database` code. But instead of just copying it over (which I did last time, ensuing in all sorts of confusions and problems), I just went ahead and published the WIP to npm, and then installed it into the `goby-interface` repo.
-
-```
-npm install
-cd node_modules/better-sqlite3
-npx node-gyp rebuild --debug --build-from-source --runtime=electron --target=26.1.0 --dist-url=https://electronjs.org/headers
-cd ../..
-npm run start
-```
