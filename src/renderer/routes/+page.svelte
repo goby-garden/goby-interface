@@ -1,6 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import { browser } from '$app/environment';
+    import Nav from '$lib/components/nav.svelte';
     // import clearstyles from '$lib/assets/clearstyles.png';
 
     //    import Database from 'better-sqlite3'; 
@@ -21,13 +22,13 @@
 
     async function specify_save_folder(){
         let file_path=await electron.open_dialog('save');
-        if(file_path) electron.open_project(file_path)
+        if(file_path) electron.open_project(file_path,true)
     }
 
     async function specify_file_location(){
         let file_path=await electron.open_dialog('locate file');
 
-        if(file_path) electron.open_project(file_path)
+        if(file_path) electron.open_project(file_path,false)
     }
     
     let n=0;
@@ -36,13 +37,13 @@
 
 <svelte:head>
     <link rel="stylesheet" href="css/clearstyle.css" >
-    <link rel="stylesheet" href="css/fonts.css" >
+    <link rel="stylesheet" href="css/global.css" >
 	<title>goby.garden</title>
 </svelte:head>
 
-<div id='os-nav-bar' class='system'>
-    <h1>goby.garden</h1>
-</div>
+<Nav title="goby.garden" />
+
+
 {#if !project_file}
     <form>
         <div id="open-or-create" class='system'>
@@ -80,28 +81,7 @@
     }
 
     
-    #os-nav-bar{
-        height:31px;
-        width:100%;
-        -webkit-app-region: drag;
-        border-bottom:1px solid rgba(255,255,255,0.2);
-        display:flex;
-        flex-flow:row nowrap;
-        align-items:center;
-        box-sizing:border-box;
-    }
-
-    #os-nav-bar h1{
-        position:relative;
-        /* top:-1px; */
-        flex:1;
-        background-color:#404040;
-        font-family:'fragment-mono','Osaka','Menlo';
-        /* padding-left:80px; */
-        
-        box-sizing:border-box;
-        text-align:center;
-    }
+    
 
     #open-or-create{
         display:flex;

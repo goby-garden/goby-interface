@@ -35,6 +35,8 @@ Home page
 - OS [window customization](https://www.electronjs.org/docs/latest/tutorial/window-customization)
 
 
+- opening URLs externally https://github.com/electron/electron/issues/1344#issuecomment-208839713
+
 
 ## better-sqlite3 misadventures
 

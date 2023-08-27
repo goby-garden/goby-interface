@@ -27,7 +27,7 @@
 		"@sveltejs/adapter-static": "^2.0.3",
 		"better-sqlite3": "^8.5.2",
 		"concurrently": "^8.2.0",
-		"goby-database": "^1.0.1",
+		"goby-database": "^1.0.4",
 		"wait-on": "^7.0.1"
 	}
 }

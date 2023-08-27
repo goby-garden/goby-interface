@@ -6,38 +6,28 @@ console.log(Project);
 
 
 let project;
+let project_name;
+let windows;
+let classes;
 
 const { app, BrowserWindow,ipcMain,Menu,dialog } = require('electron')
 
-// .on('set-title', handleSetTitle)
-
-function create_window() {
-  const win = new BrowserWindow({
-    // 540
-    width: 540,
-    height: 150,
-    minWidth:540,
-    minHeight:150,
-    titleBarStyle: 'hidden',
-    trafficLightPosition: { x: 10, y: 8 },
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.cjs'),
-      sandbox:false,
-      nodeIntegration:true
-    }
+app.whenReady()
+  .then(() => {
+    create_window({type:'home'})
+    
+    app.on('activate', function () {
+      if (BrowserWindow.getAllWindows().length === 0) create_window({type:'home'})
+    })
   })
 
-  if (process.env.NODE_ENV !== 'development') {
-        // Load production build
-        win.loadFile(`${__dirname}/../_dist/index.html`)
-  } else {
-        // Load vite dev server page 
-        console.log('Development mode')
-        // win.webContents.openDevTools();
-        win.loadURL('http://localhost:5173/')
-  }
- 
-}
+app.on('window-all-closed', function (event) {
+  event.preventDefault();
+  console.log('hey did someone turn off the lights? (all the windows closed)')
+  // if (process.platform !== 'darwin') app.quit()
+})
+
+// window event handlers ==================
 
 ipcMain.handle('open_dialog', async function(event,action){
   // console.log(event.sender,type);
@@ -66,33 +56,130 @@ ipcMain.handle('open_dialog', async function(event,action){
     break;
   }
 
-  
-
-  
-
   return dialog_output;
 });
 
-ipcMain.handle('open_project', async function(event,file_path){
+ipcMain.handle('open_project', async function(event,file_path,is_new){
   // console.log(event.sender,type);
   project=new Project(file_path)
+  project_name=path.basename(file_path);
+  classes=project.retrieve_all_classes();
+  if(is_new){
+    console.log('new project')
+    // create workspace window
+    project.action_config_window('workspace',1)
+    
+  }
+
+  // remove all old windows
+  for(let win of BrowserWindow.getAllWindows()){
+    win.close();
+  }
 
   
-  
-  // return dialog_output;
+  //fetch windows, open those which are set as 'open'
+  windows=project.retrieve_windows();
+  for(let win of windows.filter(a=>a.open)){
+ 
+    let options={
+      type:win.type,
+      size:win.metadata.size
+    }
+    console.log(options);
+    if(win.metadata.pos) options.pos=win.metadata.pos;
+    let win_instance=create_window(options);
+    win.instance_id=win_instance.webContents.id;
+
+    let move_throttle;
+    let resize_throttle;
+
+
+    win_instance.on('move',function(){
+      clearTimeout(move_throttle);
+      move_throttle = setTimeout(function(){
+        let pos=win_instance.getPosition();
+        win.metadata.pos=pos;
+        project.action_config_window('workspace',1,win.metadata,win.id)
+      }, 100);
+    })
+
+    win_instance.on('resize',function(){
+      clearTimeout(resize_throttle);
+      resize_throttle = setTimeout(function(){
+        let size=win_instance.getSize();
+        win.metadata.size=size;
+        project.action_config_window('workspace',1,win.metadata,win.id)
+      }, 100);
+    })
+   
+  }
+
+  //(eventually) update home page to display data
 });
 
-app.whenReady()
-  .then(() => {
-    create_window()
-    
-    app.on('activate', function () {
-      if (BrowserWindow.getAllWindows().length === 0) create_window()
-    })
-  })
+ipcMain.handle('ready',function(event){
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
+  let window=windows.find(a=>a.instance_id==event.sender.id);
+
+  return {
+    project_name,
+    window,
+    classes
+  };
 })
 
 
+function create_window({
+    type,
+    pos,
+    size
+  }) {
+  let defaults={
+    home:{
+      size:[540,150],
+      min_size:[540,150]
+    },
+    dropper:{
+      size:[300,400],
+      min_size:[300,400]
+    },
+    workspace:{
+      size:[1000,900],
+      min_size:[570,400]
+    }
+  }
+  let options={
+    width:size?size[0]:defaults[type].size[0],
+    height:size?size[1]:defaults[type].size[1],
+    minWidth:defaults[type].min_size[0],
+    minHeight:defaults[type].min_size[1],
+    titleBarStyle: 'hidden',
+    trafficLightPosition: { x: 10, y: 8 },
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.cjs'),
+      sandbox:false,
+      nodeIntegration:true
+    }
+  }
+  if(pos){
+    options.x=pos[0];
+    options.y=pos[1];
+  }
+
+  let subdirectory=type=='home'?'':type+'/';
+
+  const win = new BrowserWindow(options)
+
+  if (process.env.NODE_ENV !== 'development') {
+        // Load production build
+        win.loadFile(`${__dirname}/../${subdirectory}_dist/index.html`)
+  } else {
+        // Load vite dev server page 
+        console.log('Development mode')
+        // win.webContents.openDevTools({ mode: 'detach'});
+        win.loadURL(`http://localhost:5173/${subdirectory}`)
+  }
+
+  return win;
+ 
+}

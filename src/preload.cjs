@@ -6,8 +6,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   open_dialog:async (action)=>{
     return ipcRenderer.invoke('open_dialog', action);
   },
-  open_project:async (file_path)=>{
-    return ipcRenderer.invoke('open_project', file_path);
+  open_project:async (file_path,is_new)=>{
+    return ipcRenderer.invoke('open_project', file_path, is_new);
+  },
+  ready:async ()=>{
+    return ipcRenderer.invoke('ready');
   }
 })
 
