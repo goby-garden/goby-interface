@@ -29,14 +29,16 @@
     - An "index" drawer accessible through a button in the top-right corner of each page contains everything that exists in the database, and I'm thinking you could drag and drop stuff from it into a workspace.
     - This means you could conceivable have multiple instances of an element, for example different instances of a class each filtering its contents or representing it in a visually distinct manner.
     - on the development side, this means rather than looping through classes (as in the first iteration), a workspace will loop through each of the elements inside of it to place it.
-
+- With the persistent "index" of items system, it'll have to be clear how and when an item is fully _deleted_ versus merely _stashed_, and still visible. My thought right now is that items will always delete by default on using the `DEL` key, with a contextmenu (right click) option to stash them, whereas classes will be the reverse (stashed by delete key, deleted with right click)
 
 ---
 
 ### Front-end development:
 
 - It would be ideal to use the same UI elements for both the single select and the multiple select
-
+- Right now I'm using a `store` value to record the currently “focused” UI element’s ID. But I’m anticipating in the future that there may be multiple focused items at a time, in that you may focus an element inside of the currently focused element (e.g. a search field inside of a dropdown). 
+	- To address this, I think the `store` variable will need to be an array, and the unfocus function will need to check when another element is clicked/focused to see if it’s a descendant of any of the focused items in the array. If it’s not, those items need to be unfocused, and if so, then the most recently interacted-with element needs to be added to the array.
+- I  discovered just now with some playing around in the tutorial that if you bind an undefined variable to a component prop that has defaults, the variable will take on the default value, which is surprising and will hopefully save me some mess.
 
 Home page
 - can use [recent documents list](https://www.electronjs.org/docs/latest/tutorial/recent-documents) native to mac and windows to remember what projects have already been opened
@@ -72,10 +74,31 @@ This also meant that ultimately I couldn’t just use `npm link` to install the 
 
 ---
 
-### Present to-do*:
+### Ways forward:
 
-- start setting up basic table and [window structure](https://www.are.na/block/23294643) using the [Authentic Sans](https://www.are.na/block/23282741) designs I’ve been working through, even if these are basically temporary/WIP
-- start setting up the logic to store, represent and modify data with the Svelte `store` in communication with the back-end
+- [ ] populating the workspace
+    - [ ] use "block" instead of "constituent" as the loop var name
+- [ ] text object
+    - [ ] set up click event listener to add tentative text object at the clicked grid coordinate
+    - [ ] figure out how to wire up default item props with the `page_contents` variable
+    - [ ] set up validator upon exiting writing mode to see whether a new item should be added to the db (if it has no id and a length>0) or if an existing item has to be deleted (if it has an id and a length<0)
+    - [ ] set up functions in `goby-database`` to correspondingly add/remove items and set their values
+        - [ ] this should be called from `item` with a debouncer so it only updates the db when it's reasonably clear you're done typing
+            - no need to fetch an updated value, at least until after writing mode is exited
+    - [ ] set up `TextCell` component using `textarea`, with wrapping controls
+        - [ ] set up hitting `shift`+`enter` or `esc` or clicking elsewhere to exit writing mode
+        - [ ] detection for when a line surpasses the given width or height (should dispatch an event)
+        - [ ] catch and ignore
+        - I do need different elements to show up in display versus writing mode in order to control overflow well
+- [ ] drag selection
+    - [ ] detect when blocks/class rows are in the selection rectangle and add them to the selection
+    - [ ] make the rectangle persistent if it doesn't encounter any blocks, and provide options to fill region with a text or image item
+- [ ] contextmenu
+    - [ ] set up event dispatcher signaling that an action has been clicked on in the menu
+    - [ ] make it appear on the left side of the mouse if the menu would go over the page edge
+- [ ] set up right-click "context menu" dialog with options to create a class or add an image
+- [ ] set up class creation, which should involve placing the circle+line and giving the class a name (which is validated to make sure it’s unique)
+
 - continue considering the mechanics of different interactions, particularly the creation and modification of relation properties
 
 

@@ -1,0 +1,448 @@
+/* SPACED TEXT - BOILERPLATE STYLESHEET */
+/* styles adapted from https://github.com/sindresorhus/github-markdown-css/blob/main/github-markdown-light.css */
+
+/* root container styles and variables --------------*/
+.markdown-output {
+
+    /* colors */
+    --color-fg:var(--fg);
+    --color-bg:var(--bg);
+    --color-link:rgb(194, 226, 255);
+    --color-highlight:#fff8c5;
+    --color-code-bg:rgba(0,0,0,0.5);
+    --color-linerule:var(--color-fg);
+  
+    /* dimensions */
+    --content-width:100%; /* width of block elements */
+  
+  
+    /* sizing and spacing */
+    --root-size:inherit;
+    --bl:0.7em; /* (bl = baseline) */
+    --block-indent:20px;
+    --graf-spacing:8px; /* (graf = paragraph) */
+  
+  
+    /* special features */
+    --heading-border-bottom:none;
+  
+    /* body type */
+    font-family: inherit;
+    font-size: inherit; /* ^ em units are based on this value */
+    line-height: inherit;
+  
+  
+    /* set colors */
+    color:var(--color-fg);
+    /* background-color:var(--color-bg); */
+  
+    /* removes aspect ratio inflation on mobile */
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  
+    /* line break rules */
+    word-wrap: break-word;
+    hyphens:none;
+    text-wrap:pretty;
+
+    
+    /* ^ instructs browser to use better line break algorithm */
+    /* not yet functional, part of the css textmodule 4 draft */
+    /* https://www.w3.org/TR/css-text-4/#valdef-text-wrap-pretty */
+    /* more info on line breaks in the browser: https://www.are.na/nico-chilla/algorithmic-line-breaking */
+  
+  }
+  
+  /* direct children of markdown container */
+  .markdown-output>*{
+    box-sizing: border-box;
+    max-width:var(--content-width);
+  }
+  
+  
+  /* inline  elements ------------------*/
+  
+  .markdown-output em{
+    /* italic */
+    font-style:italic;
+  }
+  
+  .markdown-output b,
+  .markdown-output strong {
+    /* bold */
+    font-weight: 600;
+  }
+  
+  .markdown-output mark {
+    /* highlight (not supported with only commonmark) */
+    background-color: var(--color-highlight);
+    color: #404040;
+  }
+  
+  
+  
+  /* links */
+  .markdown-output a {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+  .markdown-output a:active,
+  .markdown-output a:hover {
+    outline-width: 0;
+  }
+  
+  .markdown-output a:hover {
+    text-decoration: underline;
+  }
+  
+  .markdown-output a:not([href]) {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  
+  
+  /* headings ------------------- */
+  
+  .markdown-output h1,
+  .markdown-output h2,
+  .markdown-output h3,
+  .markdown-output h4,
+  .markdown-output h5,
+  .markdown-output h6 {
+    /* set spacing for all headers */
+    margin-top: calc(var(--bl)*2);
+    margin-bottom:var(--bl);
+    font-weight: 600;
+    line-height: 1.25em;
+  }
+  
+  .markdown-output h1 {
+    font-weight: 600;
+    /* font-size: 2em; */
+    border-bottom:var(--heading-border-bottom);
+  }
+  
+  .markdown-output h2 {
+    font-weight: 400;
+    font-size: 1.5em;
+    border-bottom:var(--heading-border-bottom);
+  }
+  
+  .markdown-output h3 {
+    font-weight: 600;
+    font-size: 1em;
+  }
+  
+  .markdown-output h4 {
+    font-weight: 400;
+    font-size: 1em;
+  }
+  
+  
+  /* block elements ---------------------------- */
+  
+  /* standard element spacing */
+  .markdown-output p,
+  .markdown-output blockquote,
+  .markdown-output figure,
+  .markdown-output>ul,
+  .markdown-output>ol,
+  .markdown-output blockquote>ul,
+  .markdown-output blockquote>ol,
+  .markdown-output dl,
+  .markdown-output table,
+  .markdown-output pre,
+  .markdown-output details,
+  .markdown-output summary {
+    margin-top: 0;
+    margin-bottom: var(--graf-spacing);
+  }
+  
+  /* keep settings */
+  .markdown-output p{
+    widows:3;
+    orphans:3;
+  }
+  
+  /* images */
+  .markdown-output img {
+    border-style: none;
+    max-width: 100%;
+    box-sizing: content-box;
+  }
+  
+  /* horizontal rules */
+  .markdown-output hr {
+    box-sizing: content-box;
+    overflow: hidden;
+    background: transparent;
+    border: 0;
+    margin:calc(var(--bl) *2) 0;
+    border-bottom:1px dashed var(--color-linerule);
+  
+  }
+  
+  /* image and blockquote spacing */
+  .markdown-output blockquote,.markdown-output figure{
+    /* extra vertical spacing */
+    margin: calc(var(--bl)*2) 0;
+  }
+  
+  .markdown-output figcaption{
+    text-align: center;
+  }
+  
+  /* blockquotes */
+  .markdown-output blockquote {
+    /* indent */
+    padding-left:var(--block-indent);
+  }
+  
+  .markdown-output blockquote>:first-child {
+    margin-top: 0; /* remove margin from beginning of nested elements  */
+  }
+  .markdown-output blockquote>:last-child {
+    margin-bottom: 0; /* remove margin from end of nested elements */
+  }
+  
+  
+  
+  /* general --------------------------- */
+  
+  .markdown-output>*:first-child {
+    /* prevent extra gap at top */
+    margin-top: 0 !important;
+  }
+  
+  .markdown-output>*:last-child {
+    /* prevent extra gap at bottom */
+    margin-bottom: 0 !important;
+  }
+  
+  
+  /* lists ------------------- */
+  
+  .markdown-output ul ul,
+  .markdown-output ul ol,
+  .markdown-output ol ol,
+  .markdown-output ol ul {
+    /* lists inside lists don't get spacing */
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  
+  .markdown-output ul,
+  .markdown-output ol {
+    /* set indent for list level with padding */
+    padding-left:var(--block-indent);
+  }
+
+  .markdown-output li{
+    list-style:disc;
+  }
+  
+  .markdown-output li>p {
+    /* will have to investigate when <p> tags appear inside lists */
+    /* margin-top: var(--bl); */
+    margin:0;
+  }
+  
+  .markdown-output li+li {
+    /* extra internal spacing for list elements at the same level  */
+    margin-top: calc(0.25 * var(--bl));
+  }
+  
+  .markdown-output ol[type="1"] {
+    /* digits list style */
+    list-style-type: decimal;
+  }
+  
+  .markdown-output ol[type=a] {
+    /* letters list style */
+    list-style-type: lower-alpha;
+  }
+  
+  .markdown-output ol[type=i] {
+    /* roman numerals list style */
+    list-style-type: lower-roman;
+  }
+  
+  .markdown-output div>ol:not([type]) {
+    /* if no list type, use decimal */
+    list-style-type: decimal;
+  }
+  
+  .markdown-output ol ol,
+  .markdown-output ul ol {
+    /* one level of nesting list-style for ordered lists */
+    list-style-type: lower-roman;
+  }
+  
+  .markdown-output ul ul ol,
+  .markdown-output ul ol ol,
+  .markdown-output ol ul ol,
+  .markdown-output ol ol ol {
+    /* two levels of nesting list-style for ordered lists */
+    list-style-type: lower-alpha;
+  }
+  
+  /* ^^^ we could add a nested <ul> selector, but this styling (empty discs) is already built into browsers */
+  
+  /* inline footnotes */
+  .markdown-output sub,
+  .markdown-output sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  
+  .markdown-output sub {
+    bottom: -0.25em;
+  }
+  
+  .markdown-output sup {
+    top: -0.5em;
+  }
+  
+  
+  /* --------------------------------------------------------------------------------------- */
+  /* --------- not much annotations or important stuff beyond this point for now ----------- */
+  /* --------------------------------------------------------------------------------------- */
+  
+  
+  
+  /* tables----------------- */
+  /* not supported in pure commonmark */
+  
+  .markdown-output table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow: auto;
+    margin:calc(var(--bl)*2) 0;
+  }
+  
+  .markdown-output td,
+  .markdown-output th {
+    padding: 0;
+  }
+  
+  .markdown-output table th {
+    font-weight: 600;
+  }
+  
+  .markdown-output table th,
+  .markdown-output table td {
+    padding: 6px 13px;
+    border: 1px solid #d0d7de;
+  }
+  
+  .markdown-output table tr {
+    /* background-color: #ffffff; */
+    border-top: 1px solid hsla(210,18%,87%,1);
+  }
+  
+  .markdown-output table tr:nth-child(2n) {
+    background-color: #f6f8fa;
+  }
+  
+  .markdown-output table img {
+    background-color: transparent;
+  }
+  
+  
+  /* code -------------------- */
+  
+  .markdown-output pre {
+    font-family: 'Fragment Mono','Menlo',monospace;
+    word-wrap: normal;
+    padding:var(--bl);
+    background-color: var(--color-code-bg);
+    overflow:scroll;
+    /* margin-left: var(--block-indent); */
+  }
+  
+  .markdown-output tt,
+  .markdown-output code {
+    font-family: 'Fragment Mono','Menlo',monospace;
+    padding:0px 4px;
+  }
+  
+  .markdown-output code,
+  .markdown-output kbd,
+  .markdown-output pre,
+  .markdown-output samp {
+    font-family: 'Fragment Mono','Menlo',monospace;
+    font-size:0.9em;
+    line-height:1em;
+  }
+  
+  
+  .markdown-output code,
+  .markdown-output tt {
+    margin: 0;
+    background-color: var(--color-code-bg);
+    position:relative;
+    top:-0.05px;
+    padding-bottom: 1px;
+  }
+  
+  .markdown-output code br,
+  .markdown-output tt br {
+    display: none;
+  }
+  
+  .markdown-output del code {
+    text-decoration: inherit;
+  }
+  
+  .markdown-output pre code {
+    font-size: 100%;
+  }
+  
+  .markdown-output pre>code {
+    padding: 0;
+    margin: 0;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0;
+  }
+  
+  .markdown-output pre code,
+  .markdown-output pre tt {
+    display: inline;
+    max-width: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0;
+  }
+  
+
+  input[type="checkbox"]{
+    appearance: none;
+    border:1px solid var(--color-fg);
+    width:12px;
+    height:12px;
+    margin:0;
+    border-radius:0;
+  }
+
+  input[type="checkbox"]:checked{
+    background-color:var(--color-fg);
+  }
+
+
+  @media(max-width:600px){
+    .markdown-output h2{
+        font-size:1.2em;
+    }
+  }
