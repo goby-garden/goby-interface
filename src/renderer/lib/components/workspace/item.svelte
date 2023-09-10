@@ -1,21 +1,21 @@
 <script>
+// @ts-nocheck
+
     import {getContext,createEventDispatcher} from 'svelte';
     import TextCell from '$lib/components/cells/text.svelte';
     import { next_focus_id,focused } from '$lib/store.js';
 
     export let focus_id=0;
+
+    
     const dispatch = createEventDispatcher();
 
     let autowrap_boundary=17;
-    export let props={
-        id:null,
-        type:'text',
-        value:'',
-        pos:[0,0],
-        size:[4,1],
-        auto_sizing:[true,true]
-    };
+    export let props;
+    export let item;
 
+    
+    
     let delay_function=getContext('delay_function');
 
     
@@ -32,11 +32,11 @@
             
             this_focused=true;
             delay_function(()=>{
-                input.focus();
-                place_text_cursor(input);
+                input?.focus();
+                if(input) place_text_cursor(input);
             })
         }else if(val!==focus_id&&this_focused){
-            input.blur();
+            input?.blur();
             this_focused=false;
             dispatch('value_check');
         }
@@ -69,9 +69,9 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div on:click={focus_item} class:focus={$focused==focus_id} bind:this={node} class="item" style="--x:{props.pos[0]}; --y:{props.pos[1]}; --w:{props.size[0]}; --h:{props.size[1]};">
-    {#if props.type=='text'}
-        <TextCell {this_focused}  bind:value={props.value} bind:size={props.size} auto_sizing={props.auto_sizing} bind:input={input}  wrap_boundary={autowrap_boundary}/>
+<div on:click={focus_item} class:focus={focus_id==$focused} bind:this={node} class="item" style="--x:{props.pos[0]}; --y:{props.pos[1]}; --w:{props.size[0]}; --h:{props.size[1]};">
+    {#if item.type=='text'}
+        <TextCell {this_focused} bind:value={item.value} bind:size={props.size} auto_sizing={props.auto_sizing} bind:input={input} wrap_boundary={autowrap_boundary}/>
     {/if}
 </div>
 

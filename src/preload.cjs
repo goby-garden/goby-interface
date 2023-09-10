@@ -11,6 +11,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   ready:async ()=>{
     return ipcRenderer.invoke('ready');
+  },
+  write_to_database: async (command,args)=>{
+    return ipcRenderer.invoke('write_to_database',command,args);
   }
 })
 

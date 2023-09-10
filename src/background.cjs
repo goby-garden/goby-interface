@@ -121,11 +121,60 @@ ipcMain.handle('ready',function(event){
 
   let window=windows.find(a=>a.instance_id==event.sender.id);
 
-  return {
-    project_name,
-    window,
-    classes
-  };
+  switch(window.type){
+    case 'workspace':
+      let contents=project.retrieve_workspace_contents(window.id);
+      return {
+        project_name,
+        window,
+        contents
+      };
+    break;
+  }
+  
+})
+
+ipcMain.handle('write_to_database',function(event,command,args){
+  switch(command){
+    case 'create_and_add_to_workspace':
+      {
+          let {
+            workspace_id,
+            blocktype,
+            block_properties,
+            concept_data
+          }=args;
+
+          return project.action_create_and_add_to_workspace(workspace_id,blocktype,block_properties,concept_data);
+      }
+    break;
+    case 'remove_from_workspace_and_delete':
+      {
+          let {
+            workspace_id,
+            block_id,
+            blocktype,
+            concept_id
+          } = args;
+
+          return project.action_remove_from_workspace_and_delete(workspace_id,block_id,blocktype,concept_id);
+      }
+      
+    break;
+    case 'set_root_item_value':
+      {
+          let {
+            id,
+            value
+          } = args;
+
+          return project.action_set_root_item_value(id,value);
+      }
+      
+    break;
+  }
+ 
+  
 })
 
 

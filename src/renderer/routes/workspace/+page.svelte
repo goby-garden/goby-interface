@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
     // utilities and stores
     import { onMount,setContext } from "svelte";
     import { next_focus_id,focused } from '$lib/store.js';
@@ -20,15 +22,14 @@
         end:[0,0],
         on:false
     }
+
     
-    // let window_meta={
-    //     page_contents:[]
-    // }
+    
+    let project_name='';
     let window_meta;
-    /**
-     * @type {any[]}
-     */
-    let page_contents=[];
+    let blocks=[];
+    let items=[];
+
 
     let contextmenu_coords=[0,0]
 
@@ -77,6 +78,26 @@
 
     async function page_init(){
         data=await electron.ready();
+        
+        ({
+            window:window_meta,
+            project_name
+        } = data);
+        
+        for(let block of data.contents.blocks){
+            if(block.type=='item'){
+                block.item=data.contents.items.find(a=>a.id==block.concept_id);
+                block.session={
+                        focus_id:next_focus_id()
+                    }
+            }
+        }
+        ({
+            blocks,
+            items
+        } = data.contents);
+
+        
         console.log(data);
     }
 
@@ -129,16 +150,19 @@
         else if(src.id=='grid'&&!drag.on){
             console.log('grid click')
   
-            page_contents=[...page_contents,
+            blocks=[...blocks,
                 {
                     type:'item',
-                    props:{
-                        id:null,
-                        type:'text',
-                        value:'',
+                    block_id:null,
+                    concept_id:null,
+                    properties:{
                         pos:[mouse_grid_pos[0],mouse_grid_pos[1]],
                         size:[1,1],
                         auto_sizing:[true,true]
+                    },
+                    item:{
+                        type:'text',
+                        value:''
                     },
                     session:{
                         focus_id:next_focus_id()
@@ -147,7 +171,7 @@
             ]
             
             delay_function(()=>{
-                focused.set(page_contents[page_contents.length-1].session.focus_id);
+                focused.set(blocks[blocks.length-1].session.focus_id);
                 
             })
             
@@ -156,13 +180,57 @@
     }
     
 
-    function save_or_discard_item(block,i){
-        console.log(block);
-        if(block.props.value.length>0){
+    async function save_or_discard_item(block,i){
+        //check if value is empty
+        if(block.item.value.length>0){
 
+            //check if item has an id (i.e., if it's in the root table yet)
+            if(block.item.id){
+                // if yes, dispatch command to modify its value
+                await electron.write_to_database('set_root_item_value',{
+                    id:block.item.id,
+                    value:block.item.value
+                });
+            }else{
+                // if no, dispatch command to create it, add it to the workspace, and grab both IDs
+                let ids=await electron.write_to_database('create_and_add_to_workspace',{
+                    workspace_id:window_meta.id,
+                    blocktype:'item',
+                    block_properties:block.properties,
+                    concept_data:block.item
+                });
+
+                console.log(ids);
+
+                block.item.id=ids.concept_id;
+                block.concept_id=ids.concept_id;
+                block.block_id=ids.block_id;
+            }
+            
+            
         }else{
-            page_contents.splice(i,1);
-            page_contents=page_contents;
+            blocks.splice(i,1);
+            blocks=blocks;
+
+            //check if item has a root id
+            //assumes that root id and block id will always exist together in this flow
+            if(block.item.id){
+                console.log('remove and delete',`workspace id:${window_meta.id},
+                block id:${block.block_id},
+                item id:${block.concept_id}`)
+                // if yes, dispatch command to delete it from root and from the workspace
+                await electron.write_to_database('remove_from_workspace_and_delete',{
+                    workspace_id:window_meta.id,
+                    block_id:block.block_id,
+                    blocktype:'item',
+                    concept_id:block.item.id
+                });
+                
+            }
+            // if no, nothing else has to be done.
+            
+            
+            
         }
     }
 
@@ -187,9 +255,9 @@
     <div id='grid-hover' class:on={mouse_hover_visible} style="--x:{mouse_grid_pos[0]}; --y:{mouse_grid_pos[1]};"></div>
     <div id="grid-drag-select" class:on={drag.on} style="--x:{drag.start[0]}; --y:{drag.start[1]}; --x2:{drag.end[0]}; --y2:{drag.end[1]};" ></div>
 
-    {#each page_contents as block,i}
+    {#each blocks as block,i}
         {#if block.type=='item'}
-            <Item bind:props={block.props} bind:focus_id={block.session.focus_id} on:value_check={()=>{ save_or_discard_item(block,i) }}/>
+            <Item bind:props={block.properties} bind:item={block.item} bind:focus_id={block.session.focus_id} on:value_check={()=>{ save_or_discard_item(block,i) }}/>
         {/if}
     {/each}
 
