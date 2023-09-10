@@ -23,6 +23,10 @@
         on:false
     }
 
+    const min_delta = 6;
+    let start_x=0;
+    let start_y=0;
+
     
     
     let project_name='';
@@ -34,6 +38,17 @@
     let contextmenu_coords=[0,0]
 
     let mousedown_wait=false;
+
+    let double_click_track={
+        first_click_pos:[-1,-1],
+        timed_out:true,
+        start_timer:()=>{
+            double_click_track.timed_out=false;
+            setTimeout(()=>{
+                double_click_track.timed_out=true; 
+            },500)
+        }
+    }
 
     
     $:drag.end=mouse_grid_pos;
@@ -104,7 +119,7 @@
     function set_grid_pos(event){
         mouse_hover_visible=true;
         let new_x=Math.floor(event.pageX/30);
-        let new_y=Math.floor((event.pageY - 31)/30);
+        let new_y=Math.floor((event.pageY - 32)/30);
         mouse_grid_pos[0]=new_x;
         mouse_grid_pos[1]=new_y;
      
@@ -116,7 +131,8 @@
 
     function start_drag(event){
         if(event.srcElement.id=='grid'){
-            
+            start_x=event.pageX;
+            start_y=event.pageY;
             drag.start[0]=mouse_grid_pos[0];
             drag.start[1]=mouse_grid_pos[1];
             window.addEventListener('mousemove',add_drag)
@@ -146,11 +162,34 @@
     function handle_click(event){
         let src=event.srcElement;
 
+
+        const diff_x = Math.abs(event.pageX - start_x);
+        const diff_y = Math.abs(event.pageY - start_y);
+        
+
         if(!src.closest('.focus')&&$focused) focused.set(undefined);
-        else if(src.id=='grid'&&!drag.on){
+        
+        if(diff_x < min_delta && diff_y < min_delta&&src.id=='grid'){
             console.log('grid click')
-  
-            blocks=[...blocks,
+
+            if(double_click_track.timed_out){
+                double_click_track.start_timer()
+            }else{
+                start_text_block()
+            }
+            
+            
+            
+            
+        }
+        // double_click_track.start_timer();
+
+        // double_click_track.start_timer();
+   
+    }
+
+    function start_text_block(){
+        blocks=[...blocks,
                 {
                     type:'item',
                     block_id:null,
@@ -174,9 +213,6 @@
                 focused.set(blocks[blocks.length-1].session.focus_id);
                 
             })
-            
-        }
-        // if(event.currentTarget)
     }
     
 
@@ -247,7 +283,7 @@
 </svelte:head>
 <svelte:window on:mouseenter={()=>{mouse_hover_visible=true}} on:mouseout={()=>{mouse_hover_visible=false}}></svelte:window>
 
-<Nav title={(data?.project_name||'project')+" — workspace"} />
+<Nav title={(data?.project_name||'project')+" — workspace"} color_scheme="light" />
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div id="page" on:mousemove={set_grid_pos}  on:mousedown={start_drag} on:click={handle_click}>

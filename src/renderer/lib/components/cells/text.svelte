@@ -189,6 +189,7 @@
         padding:0px 6px;
         padding-top:6px;
         box-sizing:border-box;
+        cursor:text;
     }
 
     :global(.render-value p){

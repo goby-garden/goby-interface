@@ -13,6 +13,7 @@
 
 ---
 
+
 ### General interface musings:
 
 - I have an idea sketched out/in my mind for a new interface for configuring relation props, relying less on obscure language/iconography and more on physical analogies of drawing connections and wiring circuits
@@ -76,20 +77,16 @@ This also meant that ultimately I couldn’t just use `npm link` to install the 
 
 ### Ways forward:
 
-- [ ] populating the workspace
-    - [ ] use "block" instead of "constituent" as the loop var name
+
 - [ ] text object
-    - [ ] set up click event listener to add tentative text object at the clicked grid coordinate
-    - [ ] figure out how to wire up default item props with the `page_contents` variable
-    - [ ] set up validator upon exiting writing mode to see whether a new item should be added to the db (if it has no id and a length>0) or if an existing item has to be deleted (if it has an id and a length<0)
-    - [ ] set up functions in `goby-database`` to correspondingly add/remove items and set their values
-        - [ ] this should be called from `item` with a debouncer so it only updates the db when it's reasonably clear you're done typing
-            - no need to fetch an updated value, at least until after writing mode is exited
-    - [ ] set up `TextCell` component using `textarea`, with wrapping controls
+    - [x] set up click event listener to add tentative text object at the clicked grid coordinate
+    - [x] figure out how to wire up default item props with the `page_contents` variable
+    - [x] set up validator upon exiting writing mode to see whether a new item should be added to the db (if it has no id and a length>0) or if an existing item has to be deleted (if it has an id and a length<0)
+        - [x] set up functions in `goby-database`` to correspondingly add/remove items and set their values
+        - [x] this should be called from `item` with a debouncer so it only updates the db when it's reasonably clear you're done typing
+    - [x] set up `TextCell` component using `textarea`, with wrapping controls
         - [ ] set up hitting `shift`+`enter` or `esc` or clicking elsewhere to exit writing mode
-        - [ ] detection for when a line surpasses the given width or height (should dispatch an event)
-        - [ ] catch and ignore
-        - I do need different elements to show up in display versus writing mode in order to control overflow well
+
 - [ ] drag selection
     - [ ] detect when blocks/class rows are in the selection rectangle and add them to the selection
     - [ ] make the rectangle persistent if it doesn't encounter any blocks, and provide options to fill region with a text or image item
