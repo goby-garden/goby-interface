@@ -1,3 +1,14 @@
+1/20/2025
+
+Since last touching this repo many things have changed in my tooling + my perspective:
+
+- I’ve refactored/overhauled `goby-database` in a way that likely deprecated some of the back-end code I had set up
+- Svelte 5 is a thing that I want to use
+- Typescript is a thing that I want to use everywhere for this
+- I’m rethinking my interface dev priorities:
+    - Instead of with standalone objects, I want to begin with the class interface (as tables, cards, or something else) and more importantly with the **class chema editor**, which is maybe the most unique and personally interesting aspect of this.
+    - I don’t know if the idea of a canvas is as important to me as it was? I could totally imagine starting with a basic editor for a single class placed normally in the dom (maybe with the ability to tab between classes). To that end I may create a new window type, 'basic', which disregards the `workspace` parameters I had set out below in [the anatomy section](#anatomy-of-the-interface).
+
 ### Anatomy of the interface:
 
 - `home`: where to select a project, and detached window for `index`
