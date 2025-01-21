@@ -1,34 +1,33 @@
 {
-	"name": "goby-interface",
-	"version": "0.0.1",
+	"name": "goby-interface-updated",
 	"private": true,
-	"main": "src/background.cjs",
+	"version": "0.0.1",
+	"type": "module",
+	"main": "_dist/main.cjs",
 	"scripts": {
-		"preview": "vite preview",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"vite:dev": "vite dev",
 		"vite:build": "vite build",
+		"vite:preview": "vite preview",
+		"app:build": "tsc --build app",
+		"app:watch": "tsc --build --watch app",
 		"electron:start": "electron .",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./interface/tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./client/interface.json --watch",
 		"start": "NODE_ENV=development concurrently -n=s,e -c='#ff3d7b','#0ff5b4' \"npm run vite:dev\" \"wait-on http://localhost:5173/ && npm run electron:start\""
 	},
 	"devDependencies": {
-		"@electron/rebuild": "^3.3.0",
-		"@sveltejs/adapter-auto": "^2.0.0",
-		"@sveltejs/kit": "^1.20.4",
-		"electron": "^26.0.0",
-		"svelte": "^4.0.5",
-		"svelte-check": "^3.4.3",
+		"@sveltejs/adapter-static": "^3.0.8",
+		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/vite-plugin-svelte": "^4.0.0",
+		"concurrently": "^9.1.2",
+		"electron": "^34.0.0",
+		"svelte": "^5.0.0",
+		"svelte-check": "^4.0.0",
 		"typescript": "^5.0.0",
-		"vite": "^4.4.2"
+		"vite": "^5.4.11",
+		"wait-on": "^8.0.2"
 	},
-	"type": "module",
 	"dependencies": {
-		"@sveltejs/adapter-static": "^2.0.3",
-		"better-sqlite3": "^8.5.2",
-		"concurrently": "^8.2.0",
-		"goby-database": "^1.0.9",
-		"marked": "^7.0.5",
-		"wait-on": "^7.0.1"
+		"goby-database": "^2.0.9"
 	}
 }

@@ -1,23 +1,29 @@
-import adapter from '@sveltejs/adapter-static';
+import adapter from "@sveltejs/adapter-static";
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
+	// Consult https://svelte.dev/docs/kit/integrations
+	// for more information about preprocessors
+	preprocess: vitePreprocess(),
+
 	kit: {
-		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
+		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
+		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
+		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter({
-			pages: '_dist',
-			assets: '_dist',
+			pages: '_dist/interface',
+			assets: '_dist/interface',
 			fallback: undefined,
 			precompress: false,
 			strict: true
 		}),
 		files:{
-			lib: 'src/renderer/lib',
-			routes: 'src/renderer/routes',
-			appTemplate: 'src/renderer/app.html'
+			lib: 'interface/src/lib',
+			routes: 'interface/src/routes',
+			appTemplate: 'interface/src/app.html'
 		}
-	},
-	
+	}
 };
 
 export default config;
