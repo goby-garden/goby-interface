@@ -7,7 +7,12 @@ Since last touching this repo many things have changed in my tooling + my perspe
 - Typescript is a thing that I want to use everywhere for this
 - I’m rethinking my interface dev priorities:
     - Instead of with standalone objects, I want to begin with the class interface (as tables, cards, or something else) and more importantly with the **class chema editor**, which is maybe the most unique and personally interesting aspect of this.
-    - I don’t know if the idea of a canvas is as important to me as it was? I could totally imagine starting with a basic editor for a single class placed normally in the dom (maybe with the ability to tab between classes). To that end I may create a new window type, 'basic', which disregards the `workspace` parameters I had set out below in [the anatomy section](#anatomy-of-the-interface).
+    - I don’t know if the idea of a canvas is as important to me as it was? I could totally imagine starting with a basic editor for a single class placed normally in the dom (maybe with the ability to tab between classes). 
+
+To all these ends, I’ve done a complete overhaul of the directory structure and run commands, so now I can use typescript, svelte 5 is installed and my changes to `goby-database` are installed, the distribution code is more clearly bundled/isolated, and I’m giving myself a clean slate to get started with interface development again. 
+
+Connecting with what I mentioned in the last bullet, I may start by creating a new window type, 'basic', which disregards the `workspace` parameters I had set out below in [the anatomy section](#anatomy-of-the-interface).
+
 
 ### Anatomy of the interface:
 
