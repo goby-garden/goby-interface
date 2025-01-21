@@ -13,7 +13,7 @@
 		"electron:start": "electron .",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./interface/tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./client/interface.json --watch",
-		"start": "NODE_ENV=development concurrently -n=s,e -c='#ff3d7b','#0ff5b4' \"npm run vite:dev\" \"wait-on http://localhost:5173/ && npm run electron:start\""
+		"start": "NODE_ENV=development concurrently -n=t,s,e -c='#4F84FF','#ff3d7b','#0ff5b4' \"npm run app:build\"  \"npm run vite:dev\" \"wait-on http://localhost:5173/ && npm run electron:start\""
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^3.0.8",

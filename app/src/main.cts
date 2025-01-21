@@ -22,9 +22,8 @@ app.on('window-all-closed', function () {
 
 // window event handlers ==================
 
-ipcMain.handle('open_dialog', async function(event,action){
+ipcMain.handle('open_dialog', async function(event,action:'save' | 'locate file'){
     let dialog_output;
-  
     switch(action){
       case 'save':
         dialog_output=dialog.showSaveDialogSync({

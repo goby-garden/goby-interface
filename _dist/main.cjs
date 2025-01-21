@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const { app, BrowserWindow, ipcMain, Menu, dialog } = require('electron');
 const path = require('path');
@@ -25,36 +16,34 @@ app.on('window-all-closed', function () {
     // if (process.platform !== 'darwin') app.quit()
 });
 // window event handlers ==================
-ipcMain.handle('open_dialog', function (event, action) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let dialog_output;
-        switch (action) {
-            case 'save':
-                dialog_output = dialog.showSaveDialogSync({
-                    title: 'Choose the name and save location for your project',
-                    // message:'Choose the name and location for your project',
-                    buttonLabel: 'Create',
-                    nameFieldLabel: 'Project name:',
-                    properties: [
-                        'showOverwriteConfirmation'
-                    ]
-                });
-                dialog_output = dialog_output === null || dialog_output === void 0 ? void 0 : dialog_output.replace(/\.[^/.]+$/, '');
-                if (dialog_output)
-                    dialog_output = dialog_output + '.db';
-                break;
-            case 'locate file':
-                dialog_output = dialog.showOpenDialogSync({
-                    filters: [
-                        { name: 'Custom File Type', extensions: ['db'] }
-                    ]
-                });
-                if (dialog_output)
-                    dialog_output = dialog_output[0];
-                break;
-        }
-        return dialog_output;
-    });
+ipcMain.handle('open_dialog', async function (event, action) {
+    let dialog_output;
+    switch (action) {
+        case 'save':
+            dialog_output = dialog.showSaveDialogSync({
+                title: 'Choose the name and save location for your project',
+                // message:'Choose the name and location for your project',
+                buttonLabel: 'Create',
+                nameFieldLabel: 'Project name:',
+                properties: [
+                    'showOverwriteConfirmation'
+                ]
+            });
+            dialog_output = dialog_output?.replace(/\.[^/.]+$/, '');
+            if (dialog_output)
+                dialog_output = dialog_output + '.db';
+            break;
+        case 'locate file':
+            dialog_output = dialog.showOpenDialogSync({
+                filters: [
+                    { name: 'Custom File Type', extensions: ['db'] }
+                ]
+            });
+            if (dialog_output)
+                dialog_output = dialog_output[0];
+            break;
+    }
+    return dialog_output;
 });
 // ipcMain.handle('open_project', async function(event,file_path,is_new){
 //     if(!Project) Project= await import('goby-database').then(goby => goby.default);
@@ -117,16 +106,25 @@ function create_window({ type, pos, size }) {
         }
     };
     let pos_obj = pos ? { x: pos[0], y: pos[1] } : {};
-    let options = Object.assign({ width: size ? size[0] : defaults[type].size[0], height: size ? size[1] : defaults[type].size[1], minWidth: defaults[type].min_size[0], minHeight: defaults[type].min_size[1], titleBarStyle: 'hidden', trafficLightPosition: { x: 10, y: 8 }, webPreferences: {
+    let options = {
+        width: size ? size[0] : defaults[type].size[0],
+        height: size ? size[1] : defaults[type].size[1],
+        minWidth: defaults[type].min_size[0],
+        minHeight: defaults[type].min_size[1],
+        titleBarStyle: 'hidden',
+        trafficLightPosition: { x: 10, y: 8 },
+        webPreferences: {
             preload: path.join(__dirname, 'preload.cjs'),
             sandbox: false,
             nodeIntegration: true
-        } }, pos_obj);
+        },
+        ...pos_obj
+    };
     let subdirectory = type == 'home' ? '' : type + '/';
     const win = new BrowserWindow(options);
     if (process.env.NODE_ENV !== 'development') {
         // Load production build
-        win.loadFile(`${__dirname}/_dist/interface/${subdirectory}/index.html`);
+        win.loadFile(`${__dirname}/_dist/interface/${subdirectory}.html`);
     }
     else {
         // Load vite dev server page 
