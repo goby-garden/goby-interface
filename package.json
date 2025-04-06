@@ -3,7 +3,7 @@
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
-	"main": "_dist/main.cjs",
+	"main": "_dist/main.mjs",
 	"scripts": {
 		"vite:dev": "vite dev",
 		"vite:build": "vite build",
@@ -16,6 +16,7 @@
 		"start": "NODE_ENV=development concurrently -n=t,s,e -c='#4F84FF','#ff3d7b','#0ff5b4' \"npm run app:build\"  \"npm run vite:dev\" \"wait-on http://localhost:5173/ && npm run electron:start\""
 	},
 	"devDependencies": {
+		"@electron/rebuild": "^3.7.1",
 		"@sveltejs/adapter-static": "^3.0.8",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
@@ -28,6 +29,6 @@
 		"wait-on": "^8.0.2"
 	},
 	"dependencies": {
-		"goby-database": "^2.0.9"
+		"goby-database": "^2.0.12"
 	}
 }

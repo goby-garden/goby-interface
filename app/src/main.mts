@@ -1,9 +1,19 @@
-const { app, BrowserWindow,ipcMain,Menu,dialog } = require('electron');
+import { app, BrowserWindow, ipcMain, Menu, dialog } from 'electron';
 import { BrowserWindowConstructorOptions } from 'electron';
-const path = require('path');
-let Project;
+import Project from 'goby-database';
+// import type Project from 'goby-database/dist/index.d.ts';
+import type {ApplicationWindow} from 'goby-database/dist/types';
+import path from 'path';
+const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
+// data variables
 
+// let GobyProject:typeof import('goby-database').default | undefined;
+let project:Project | undefined;
+let project_name:string |undefined;
+
+// application variables
+let windows:({instance_id?:number} & ApplicationWindow)[] = [];
 
 app.whenReady()
   .then(() => {
@@ -23,6 +33,7 @@ app.on('window-all-closed', function () {
 // window event handlers ==================
 
 ipcMain.handle('open_dialog', async function(event,action:'save' | 'locate file'){
+  console.log('main - open dialog')
     let dialog_output;
     switch(action){
       case 'save':
@@ -53,6 +64,65 @@ ipcMain.handle('open_dialog', async function(event,action:'save' | 'locate file'
   });
 
 
+  
+ipcMain.handle('open_project',async function(event,file_path:string,is_new:boolean){
+    // if(!GobyProject){
+    //   // this is a really dumb confluence of typescript and ESM syntax
+    //   // const gobyImport=await import('goby-database').then(goby => goby.default);
+    //   const gobyImport = await import('goby-database');
+    //   GobyProject = gobyImport.default || gobyImport;
+    //   // GobyProject= gobyImport;
+    // }
+    // project = new GobyProject(file_path);
+    project = new Project(file_path)
+    project_name=path.basename(file_path);
+    init_windows(project,is_new);
+})
+
+
+function init_windows(project:Project,is_new:boolean){
+  if(is_new){
+    console.log('new project')
+
+    // create a new workspace window
+    project.action_config_window({type:'workspace',open:1});
+  }
+
+  // remove all old windows
+  for(let win of BrowserWindow.getAllWindows()){
+    win.close();
+  }
+
+  //fetch windows, open those which are set as 'open'
+  windows=project.retrieve_windows();
+  
+  for(let win of windows.filter(a=>a.open)){
+    let options={
+      type:win.type,
+      size:win.metadata.size,
+      ...(win.metadata.pos&&win.metadata.pos[0]?{pos:win.metadata.pos}:{})
+    }
+    console.log(options);
+    let win_instance=create_window(options);
+
+    let throttle:NodeJS.Timeout | undefined;
+
+    const set_latest_size_position=()=>{
+      const pos=win_instance.getPosition();
+      win.metadata.pos=[pos[0],pos[1]];
+      const size=win_instance.getSize();
+      win.metadata.size=[size[0],size[1]];
+      if(throttle) clearTimeout(throttle);
+      throttle=setTimeout(()=>{
+        project.action_config_window({type:'workspace',open:1,metadata:win.metadata,id:win.id})
+      },100)
+    }
+
+    win_instance.on('move',set_latest_size_position);
+    win_instance.on('resize',set_latest_size_position)
+
+  }
+}
   
 // ipcMain.handle('open_project', async function(event,file_path,is_new){
 //     if(!Project) Project= await import('goby-database').then(goby => goby.default);
@@ -118,7 +188,7 @@ function create_window({
     pos,
     size
   }:{
-    type:'home' | 'dropper' | 'workspace',
+    type:'home' | 'hopper' | 'workspace',
     pos?:[number,number],
     size?:[number,number]
   }) {
@@ -127,7 +197,7 @@ function create_window({
       size:[540,150],
       min_size:[540,150]
     },
-    dropper:{
+    hopper:{
       size:[300,400],
       min_size:[300,400]
     },

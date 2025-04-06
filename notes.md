@@ -1,3 +1,12 @@
+#### <span class="date">4/5/2025</span>
+
+Some steps to get this thing up and running:
+
+- [] set up a function to open/create a database file and present a blank window
+    - can keep my original open file dialog for now
+- [] possibly use the sandbox in `goby-database` to create one of my classic typeface test databases
+
+
 #### <span class="date">1/20/2025</span>
 
 Since last touching this repo many things have changed in my tooling + my perspective:
@@ -25,7 +34,7 @@ Connecting with what I mentioned in the last bullet, I may start by creating a n
     - tables
         - class instances
         - other customized table views/class filters
-- `dropper`: frictionless deposit box for new items
+- `hopper`: frictionless deposit box for new items
 
 ---
 

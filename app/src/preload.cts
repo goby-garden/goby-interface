@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron')
 
 const electronAPI={
     open_dialog:async (action:'save' | 'locate file')=>{
+      console.log('preload - open_dialog')
       return ipcRenderer.invoke('open_dialog', action);
     },
     open_project:async (file_path:string,is_new:boolean)=>{
