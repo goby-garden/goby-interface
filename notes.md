@@ -1,10 +1,16 @@
+#### <span class="date">4/7/2025</span>
+
+I am feeling a little beleaguered after spending many hours this weekend trying to get the electron program to start, 
+amidst challenges with [JS module syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules), typescript compilation, and of course the [classic mismatch](#better-sqlite3-misadventures) between the node version electron uses and the version for which better-sqlite3 was compiled. But with this push, the thing is finally alive, and hopefully I can begin development in earnest on the interface soon!
+
+
 #### <span class="date">4/5/2025</span>
 
 Some steps to get this thing up and running:
 
-- [] set up a function to open/create a database file and present a blank window
+- set up a function to open/create a database file and present a blank window
     - can keep my original open file dialog for now
-- [] possibly use the sandbox in `goby-database` to create one of my classic typeface test databases
+- possibly use the sandbox in `goby-database` to create one of my classic typeface test databases
 
 
 #### <span class="date">1/20/2025</span>
@@ -97,6 +103,13 @@ npm run start
 to manually rebuild the module binary, which seems to have worked for me.
 
 This also meant that ultimately I couldn’t just use `npm link` to install the `goby-database` code. But instead of just copying it over (which I did last time, ensuing in all sorts of confusions and problems), I just went ahead and published the WIP to npm, and then installed it into the `goby-interface` repo.
+
+**04/2025 update:** I had problems pop up with this again after my recent updates to the codebase; I moved to electron version 34.0.0, in which, it turns out, recompiling better-sqlite3 with electron-rebuild produces [a monstrous unhandled error](https://github.com/electron/rebuild/issues/1179) and fails. Resolving this is a little beyond me and I couldn’t find any user-documented solutions on github. 
+
+Luckily I was at least able to get it running again by reverting to an older version of electron, 28.0.0, in which the rebuild finishes successfully. V28 is also the version in which they fixed the bug mentioned above, so no need to manually recompile anymore. 
+
+I’m sure this is not the last time I’ll encounter this issue though — likely it’ll rear its ugly head again when I package the application for distribution.
+
 
 ---
 

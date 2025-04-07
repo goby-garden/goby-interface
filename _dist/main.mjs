@@ -1,6 +1,5 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import Project from 'goby-database';
-import Database from 'better-sqlite3';
 import path from 'path';
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 // data variables
@@ -77,7 +76,9 @@ function init_windows(project, is_new) {
     }
     //fetch windows, open those which are set as 'open'
     windows = project.retrieve_windows();
+
     for (let win of windows.filter(a => a.open)) {
+        console.log('win',win)
         let options = {
             type: win.type,
             size: win.metadata.size,
@@ -87,9 +88,11 @@ function init_windows(project, is_new) {
         let win_instance = create_window(options);
         let throttle;
         const set_latest_size_position = () => {
+            
             const pos = win_instance.getPosition();
             win.metadata.pos = [pos[0], pos[1]];
             const size = win_instance.getSize();
+            // console.log(pos,size)
             win.metadata.size = [size[0], size[1]];
             if (throttle)
                 clearTimeout(throttle);
