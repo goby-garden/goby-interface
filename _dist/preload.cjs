@@ -6,6 +6,9 @@ const electronAPI = {
         console.log('preload - open_dialog');
         return ipcRenderer.invoke('open_dialog', action);
     },
+    get_workspace: async () => {
+        return ipcRenderer.invoke('get_workspace');
+    },
     open_project: async (file_path, is_new) => {
         return ipcRenderer.invoke('open_project', file_path, is_new);
     },

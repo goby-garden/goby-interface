@@ -1,3 +1,15 @@
+#### <span class="date">4/27/2025</span>
+
+...on the other hand, if I ever port this so that you can access a project over a network connection, e.g. via an app, I don’t want to be in a situation where goby has to send a bunch of small requests to load anything. So here’s a potential balance to strike: the workspace request can fetch an array of its blocks and an array of item data for each of those blocks. Still TBD whether it also include class item data, or whether that would be a separate request. But possibly it could include the first page of a paginated item set for each class.
+
+#### <span class="date">4/26/2025</span>
+
+I’m leaning towards loading project data in a distributed way, on a component-level, rather than what I did in the initial implementation, i.e. load everything all at once and reload it all for every change. This will hopefully prevent overfetching data from the database, but it will require me to do some fine-tooth combing when it comes refreshing and propagating the latest data in the interface:
+
+- when a relation prop changes, any items in the targeted classes that changed will have to be re-fetched
+- I would ideally want to avoid re-fetching the same asset so that all edits are immediately reactive; e.g. if I have two views of the same class in the same workspace. So I would probably want to centrally record what I’ve fetched as a cache that I pull from and refresh as needed
+
+
 #### <span class="date">4/7/2025</span>
 
 I am feeling a little beleaguered after spending many hours this weekend trying to get the electron program to start, 

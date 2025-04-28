@@ -8,12 +8,26 @@ let project;
 let project_name;
 // application variables
 let windows = [];
+const default_window_settings = {
+    home: {
+        size: [540, 150],
+        min_size: [540, 150]
+    },
+    hopper: {
+        size: [300, 400],
+        min_size: [300, 400]
+    },
+    workspace: {
+        size: [1200, 800],
+        min_size: [570, 400]
+    }
+};
 app.whenReady()
     .then(() => {
-    create_window({ type: 'home' });
+    create_electron_window({ type: 'home' });
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0)
-            create_window({ type: 'home' });
+            create_electron_window({ type: 'home' });
     });
 });
 app.on('window-all-closed', function () {
@@ -52,17 +66,20 @@ ipcMain.handle('open_dialog', async function (event, action) {
     return dialog_output;
 });
 ipcMain.handle('open_project', async function (event, file_path, is_new) {
-    // if(!GobyProject){
-    //   // this is a really dumb confluence of typescript and ESM syntax
-    //   // const gobyImport=await import('goby-database').then(goby => goby.default);
-    //   const gobyImport = await import('goby-database');
-    //   GobyProject = gobyImport.default || gobyImport;
-    //   // GobyProject= gobyImport;
-    // }
-    // project = new GobyProject(file_path);
     project = new Project(file_path);
     project_name = path.basename(file_path);
     init_windows(project, is_new);
+});
+ipcMain.handle('get_workspace', async function (event) {
+    console.log(event);
+    const sender_id = event.sender.id;
+    const sender = windows.find((w) => w.instance_id == sender_id);
+    if (sender) {
+        const workspace_contents = project.retrieve_workspace_contents(sender.id);
+        // gets an initial representation of each block
+        // and possibly a paginated set of the items in a class
+        return workspace_contents;
+    }
 });
 function init_windows(project, is_new) {
     if (is_new) {
@@ -76,23 +93,22 @@ function init_windows(project, is_new) {
     }
     //fetch windows, open those which are set as 'open'
     windows = project.retrieve_windows();
-
+    // NOTE: if no windows or open windows, I’ll eventually want the home menu or hopper to appear
+    // temp solution for dev: if no windows, just create an empty workspace.
     for (let win of windows.filter(a => a.open)) {
-        console.log('win',win)
         let options = {
             type: win.type,
             size: win.metadata.size,
             ...(win.metadata.pos && win.metadata.pos[0] ? { pos: win.metadata.pos } : {})
         };
         console.log(options);
-        let win_instance = create_window(options);
+        let win_instance = create_electron_window(options);
+        win.instance_id = win_instance.webContents.id;
         let throttle;
         const set_latest_size_position = () => {
-            
             const pos = win_instance.getPosition();
             win.metadata.pos = [pos[0], pos[1]];
             const size = win_instance.getSize();
-            // console.log(pos,size)
             win.metadata.size = [size[0], size[1]];
             if (throttle)
                 clearTimeout(throttle);
@@ -126,7 +142,7 @@ function init_windows(project, is_new) {
 //       }
 //       console.log(options);
 //       if(win.metadata.pos) options.pos=win.metadata.pos;
-//       let win_instance=create_window(options);
+//       let win_instance=create_electron_window(options);
 //       win.instance_id=win_instance.webContents.id;
 //       let move_throttle;
 //       let resize_throttle;
@@ -149,27 +165,13 @@ function init_windows(project, is_new) {
 //     }
 //     //(eventually) update home page to display data
 //   });
-function create_window({ type, pos, size }) {
-    const defaults = {
-        home: {
-            size: [540, 150],
-            min_size: [540, 150]
-        },
-        hopper: {
-            size: [300, 400],
-            min_size: [300, 400]
-        },
-        workspace: {
-            size: [1000, 900],
-            min_size: [570, 400]
-        }
-    };
+function create_electron_window({ type, pos, size }) {
     let pos_obj = pos ? { x: pos[0], y: pos[1] } : {};
     let options = {
-        width: size ? size[0] : defaults[type].size[0],
-        height: size ? size[1] : defaults[type].size[1],
-        minWidth: defaults[type].min_size[0],
-        minHeight: defaults[type].min_size[1],
+        width: size ? size[0] : default_window_settings[type].size[0],
+        height: size ? size[1] : default_window_settings[type].size[1],
+        minWidth: default_window_settings[type].min_size[0],
+        minHeight: default_window_settings[type].min_size[1],
         titleBarStyle: 'hidden',
         trafficLightPosition: { x: 10, y: 8 },
         webPreferences: {

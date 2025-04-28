@@ -1,35 +1,25 @@
 <script lang="ts">
-    import type { ElectronAPI } from '../../../app/src/preload.cjs';
+    import { instance } from '$lib/index.svelte.js';
     import { onMount } from "svelte";
     import { browser } from '$app/environment';
-    import Nav from '$lib/components/nav.svelte';
-    // import clearstyles from '$lib/assets/clearstyles.png';
+    import Nav from '$lib/global/nav.svelte';
 
-    //    import Database from 'better-sqlite3'; 
     console.log(browser);
 
     let project_file=undefined;
-    let electron:ElectronAPI | undefined;
-
-    onMount(() => {
-        // @ts-ignore
-        electron=window.electronAPI
-	});
 
     async function specify_save_folder(){
         console.log('specify_save_folder');
-        let file_path=await electron?.open_dialog('save');
-        if(file_path) electron?.open_project(file_path,true)
+        let file_path=await instance.electron?.open_dialog('save');
+        if(file_path) instance.electron?.open_project(file_path,true)
     }
 
     async function specify_file_location(){
         console.log('specify_file_location')
-        let file_path=await electron?.open_dialog('locate file');
+        let file_path=await instance.electron?.open_dialog('locate file');
 
-        if(file_path) electron?.open_project(file_path,false)
+        if(file_path) instance.electron?.open_project(file_path,false)
     }
-    
-    let n=0;
     
 </script>
 
@@ -45,9 +35,9 @@
 {#if !project_file}
     <form>
         <div id="open-or-create" class='system'>
-            <button name="file-selector" on:click={specify_file_location}>open existing file</button>
+            <button name="file-selector" onclick={specify_file_location}>open existing file</button>
             or
-            <button name="new-project" on:click={specify_save_folder}>start a new project</button>
+            <button name="new-project" onclick={specify_save_folder}>start a new project</button>
         </div>
         
         <!-- <label class='system' for="project-file-input">Open an existing project file</label>
