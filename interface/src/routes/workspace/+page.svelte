@@ -29,13 +29,20 @@
 </script>
 
 <Nav color_scheme="light"/>
+<main>
+    {#each blocks_iterable as block,b}
+        {#if block.type=='class'}
+            <ClassBlock bind:block={blocks_iterable[b]} />
+        {/if}
 
-{#each blocks_iterable as block,b}
-    {#if block.type=='class'}
-        <ClassBlock bind:block={blocks_iterable[b]} />
-    {/if}
+    {/each}
+</main>
 
-{/each}
-
-
+<style>
+    main{
+        padding-inline:20px 20px;
+        padding-block:20px 20px;
+        min-width:fit-content;
+    }
+</style>
 
