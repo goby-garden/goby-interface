@@ -1,3 +1,16 @@
+#### <span class="date">5/3/2025</span>
+
+I did some initial work the other day to set up the retrieval of class data and rendering of the table; ambiently it prompted some ideation on another display style which I think will ultimately be more interesting and useful than the table, and also some dangerous contemplation of the possibility of items which exist in multiple classes. But these are things to explore if/once I can implement this initial vision,i.e. a class of items represented as a table, editable via the diagrammatic property editor interface that I’ve sketched.
+
+The next steps of that implementation are:
+
+- [] setting up individual components for different kinds of property inputs, e.g. text, single/multiple select, etc, and 
+    - will need to figure out data binding and how to trigger saves to the database/refreshes of data (which as I described earlier, I would like to do more surgically)
+- [] column width and similar workspace display configuration options
+    - I’m hesitant to implement this before giving more thought to the schema and the specific display settings I want; but the column width thing in particular is just one of those things that is bugging me as a user while I test out the tool; maybe there’s some sort of stopgap solution I can implement for now.
+
+
+
 #### <span class="date">4/27/2025</span>
 
 ...on the other hand, if I ever port this so that you can access a project over a network connection, e.g. via an app, I don’t want to be in a situation where goby has to send a bunch of small requests to load anything. So here’s a potential balance to strike: the workspace request can fetch an array of its blocks and an array of item data for each of those blocks. Still TBD whether it also include class item data, or whether that would be a separate request. But possibly it could include the first page of a paginated item set for each class.
