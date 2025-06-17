@@ -1,5 +1,6 @@
 <script lang="ts">
     import type {BlockIterable} from '$lib/workspace/utils.ts';
+    import TextCell from '$lib/workspace/cells/TextCell.svelte';
     let {
         block = $bindable()
     }:{
@@ -17,7 +18,7 @@
         <div role="rowgroup">
             <div role="row" class="properties-table-header class-table-row">
                 {#each data.properties as property}
-                    <div class="property-column-header" role="columnheader">{property.name}</div>
+                    <div class="property-column-header class-table-cell" role="columnheader">{property.name}</div>
                 {/each}
             </div>
         </div>
@@ -25,9 +26,15 @@
             {#each data.items || [] as item,i}
                 <div role="row" class="item class-table-row" class:last-item={i==data.items.length-1}>
                     {#each data.properties as property}
-                    <div role="cell" class="cell" data-type="{property.type}">
-                        {#if property.type=='data'&&property.data_type=='string'}
-                            {item['user_'+property.name]}
+                    <div role="cell" class="class-table-cell" data-prop-type="{property.type}">
+                        {#if property.type=='data'}
+                            {#if property.data_type=='string'}
+                            
+                                <TextCell 
+                                    bind:value={item['user_'+property.name]} 
+                                />
+                            {/if}
+                            
                         {/if}
                     </div>
                     {/each}
@@ -55,6 +62,8 @@
         grid-template-columns:14px 1fr 14px;
         grid-template-rows:auto;
         width:fit-content;
+        min-width:fit-content;
+        max-width:fit-content;
     }
 
     .class-meta{
@@ -62,16 +71,19 @@
         /* top:0;
         left:0;
         width:100%; */
-        padding-bottom:4px;
+        padding-bottom:5px;
     }
 
     .class-table-view{
         grid-column:2 / 3;
         display:grid;
-        grid-template-columns:repeat(var(--n-properties),1fr);
+        grid-template-columns:repeat(var(--n-properties),min-content);
+        /* grid-template-columns:repeat(var(--n-properties),minmax(180px, 1fr)); */
         grid-template-rows:repeat(auto,40px);
-        min-width:calc(var(--n-properties) * 180px);
+        /* min-width:calc(var(--n-properties) * 180px); */
         gap:0px 14px;
+
+        --default-col-width:180px;
     }
 
     .class-table-row{
@@ -80,6 +92,15 @@
         grid-template-columns: subgrid;
         padding-block:8px;
         
+    }
+
+    .class-table-cell{
+        min-width:var(--default-col-width);
+        width:min-content ;
+    }
+
+    .item.class-table-row:hover{
+        background-color:#FBFBFB;
     }
 
     .item{
@@ -96,11 +117,6 @@
         display:contents;
     }
 
-    .cell[data-type="data"]{
-        line-height:1.3em;
-    }
-
-
     .class-name{
         transform:translateY(-50%);
         font-weight:600;
@@ -112,13 +128,15 @@
         flex-flow:row nowrap;
         align-items:center;
         gap:calc(14px - var(--icon-size) * 0.5);
-        --icon-size:10px;
+        --icon-size:12px;
         margin-left:calc(var(--icon-size) * -0.5);
         width: fit-content;
+        /* color:green; */
     }
 
     .property-column-header{
         font-weight:600;
+        white-space:nowrap;
     }
 
     .class-icon{

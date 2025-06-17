@@ -4,7 +4,7 @@
     import { browser } from '$app/environment';
     import type Project from 'goby-database';
     import Nav from '$lib/global/nav.svelte';
-    import ClassBlock from '$lib/workspace/blocks/ClassBlock/index.svelte';
+    import ClassBlock from '$lib/workspace/blocks/ClassBlock.svelte';
     import {combinedBlockList} from '$lib/workspace/utils.js';
 
     let workspace:ReturnType<Project["retrieve_workspace_contents"]>=$state({blocks:[],items:[],classes:[]})

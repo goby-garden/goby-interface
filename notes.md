@@ -1,3 +1,15 @@
+#### <span class="date">6/16/2025</span>
+
+As I’m starting to set up the table, one thing that’s becoming clear is I need to figure out how to save and ultimately edit the display state in various ways. Specifically:
+
+- toggle text prop wrapping
+- prop column width:
+    - should it be responsive to the window in some way?
+    - should it be constrained to a grid?
+    - what should the default be? I.e. How should it decide the width of columns without any user configuration?
+
+
+
 #### <span class="date">5/3/2025</span>
 
 I did some initial work the other day to set up the retrieval of class data and rendering of the table; ambiently it prompted some ideation on another display style which I think will ultimately be more interesting and useful than the table, and also some dangerous contemplation of the possibility of items which exist in multiple classes. But these are things to explore if/once I can implement this initial vision,i.e. a class of items represented as a table, editable via the diagrammatic property editor interface that I’ve sketched.
