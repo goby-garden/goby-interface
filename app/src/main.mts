@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, Menu, dialog,webContents } from 'electron'
 import { BrowserWindowConstructorOptions } from 'electron';
 import Project from 'goby-database';
 // import type Project from 'goby-database/dist/index.d.ts';
-import type {ApplicationWindow} from 'goby-database/dist/types';
+import type {ApplicationWindow,Property,ClassRow} from 'goby-database/dist/types';
 import path from 'path';
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
@@ -92,7 +92,6 @@ ipcMain.handle('open_project',async function(event,file_path:string,is_new:boole
 })
 
 ipcMain.handle('get_workspace',async function(event){
-  console.log(event);
   const sender_id=event.sender.id;
   const sender=windows.find((w)=>w.instance_id==sender_id);
   if(sender){
@@ -105,6 +104,26 @@ ipcMain.handle('get_workspace',async function(event){
   }
   
 
+})
+
+ipcMain.handle('get_class_meta',async function(event,class_id:number){
+  // const class_meta=project.retrieve_class
+})
+
+ipcMain.handle('get_relation_options',async function(event,property:Property){
+  let options:ClassRow[] = [];
+  for(const {class_id} of property.relation_targets ?? []){
+    const class_items=project.retrieve_class_items({
+      class_id,
+      slim:true
+    }).map((item)=>({
+      ...item,
+      class_id
+    }))
+
+    options = [...options,...class_items]
+  }
+  return options;
 })
 
 

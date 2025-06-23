@@ -1,37 +1,61 @@
 <script lang="ts">
-    import {state} from '$lib/workspace/store.svelte';
+    import {context,match_focus_element} from '$lib/workspace/store.svelte';
     import CellWrapper from "./CellWrapper.svelte";
     let {
         value = $bindable(),
         focused = $bindable(false),
         wrap = false,
+        parent
     }:{
         value:string,
+        parent:{block_id:number,class_id:number,item_id:number}
         focused?:boolean,
         wrap?:boolean
     } = $props();
 
-    const element_id=$props.id();
+    const svelte_id=$props.id();
+
+    let textEditor:HTMLDivElement;
 
     $effect(()=>{
         if(focused){
-            state.focus_element=element_id;
-        }else if(state.focus_element==element_id){
-            state.focus_element=null;
+            if(!match_focus_element(parent)){
+                console.log('set focus')
+                context.focus_element={
+                    ...parent,
+                    svelte_id
+                };
+            }
+        }else if(match_focus_element(parent)){
+            requestAnimationFrame(()=>{
+                 console.log('exit focus')
+                 context.focus_element=null;
+            })            
         }
     })
+
+    function handle_keydown(e:KeyboardEvent){
+        if(e.key=='Escape'){
+            textEditor.blur();
+        }
+    }
+    
 </script>
 
-<CellWrapper data_type="string" >
+<CellWrapper >
     <!-- contenteditable='plaintext-only' -->
      <div class="text-value-outer" class:wrap class:focused>
         <div 
-        class="text-value edit" 
-        bind:innerText={value}
-        onfocus={()=>focused=true}
-        onblur={()=>focused=false}
-        contenteditable='plaintext-only'
-        ></div>
+            role="textbox"
+            tabindex="0"
+            class="text-value edit" 
+            bind:innerText={value}
+            bind:this={textEditor}
+            onfocus={()=>focused=true}
+            onblur={()=>focused=false}
+            onkeydown={handle_keydown}
+            contenteditable='plaintext-only'
+            ></div>
         <div class="text-value display">{value}</div>
      </div>
 </CellWrapper>
@@ -41,6 +65,7 @@
     .text-value-outer{
         display:grid;
         grid-template-areas:"main";
+        line-height:1.3em;
     }
 
     .text-value{

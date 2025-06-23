@@ -1,12 +1,12 @@
 <script lang="ts">
     import type { Snippet } from 'svelte'
     let {
-        data_type,
+        width = 'fit-content',
         children
-    }:{data_type:string,children:Snippet} = $props();
+    }:{width?:string,children?:Snippet} = $props();
 </script>
 
-<div class="cell-content-wrapper" data-type={data_type}>
+<div class="cell-content-wrapper" style="--width:{width};">
     {@render children?.()}
 </div>
 
@@ -14,7 +14,6 @@
 <style>
     .cell-content-wrapper{
         width:100%;
-        min-width:fit-content;
-        line-height:1.3em;
+        min-width:var(--width);
     }
 </style>

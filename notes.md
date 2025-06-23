@@ -1,3 +1,14 @@
+
+
+#### <span class="date">6/23/2025</span>
+
+I’m leaving off tonight halfway through implementing the relation property cell display - got pretty far but I’m figuring out my approach to retrieving and caching data as I build this, and there’s a lot more to go than what I have the time to do before bed. 
+
+With regard to data: I’m realizing that having the metadata for each class on hand is going to be pretty important, since I need information from these classes to correctly render their items as part of relation property cells. Since this metadata a pretty trivial amount of information, I think it’s okay to serve it up front.
+
+The only part of the database which I think I need to avoid being greedy about is the items, since it’s totally plausible that someone would have a memory-pushing amount of items in their database, and I actively intend to implement pagination. Now this is a misplaced goby-database thought, but I think I should move away from caching these at all on the backend. If I need to do any operation that transforms them, I can ‘stream’ them in a paginated loop without saving them beyond that. And then instead when I retrieve the classes, I can specifically pull the paginated portion that I need for any displayed classes and serve it up.
+
+
 #### <span class="date">6/16/2025</span>
 
 As I’m starting to set up the table, one thing that’s becoming clear is I need to figure out how to save and ultimately edit the display state in various ways. Specifically:
@@ -16,9 +27,9 @@ I did some initial work the other day to set up the retrieval of class data and 
 
 The next steps of that implementation are:
 
-- [] setting up individual components for different kinds of property inputs, e.g. text, single/multiple select, etc, and 
+- [ ] setting up individual components for different kinds of property inputs, e.g. text, single/multiple select, etc, and 
     - will need to figure out data binding and how to trigger saves to the database/refreshes of data (which as I described earlier, I would like to do more surgically)
-- [] column width and similar workspace display configuration options
+- [ ] column width and similar workspace display configuration options
     - I’m hesitant to implement this before giving more thought to the schema and the specific display settings I want; but the column width thing in particular is just one of those things that is bugging me as a user while I test out the tool; maybe there’s some sort of stopgap solution I can implement for now.
 
 

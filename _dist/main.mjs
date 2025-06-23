@@ -71,7 +71,6 @@ ipcMain.handle('open_project', async function (event, file_path, is_new) {
     init_windows(project, is_new);
 });
 ipcMain.handle('get_workspace', async function (event) {
-    console.log(event);
     const sender_id = event.sender.id;
     const sender = windows.find((w) => w.instance_id == sender_id);
     if (sender) {
@@ -80,6 +79,20 @@ ipcMain.handle('get_workspace', async function (event) {
         // and possibly a paginated set of the items in a class
         return workspace_contents;
     }
+});
+ipcMain.handle('get_relation_options', async function (event, property) {
+    let options = [];
+    for (const { class_id } of property.relation_targets ?? []) {
+        const class_items = project.retrieve_class_items({
+            class_id,
+            slim: true
+        }).map((item) => ({
+            ...item,
+            class_id
+        }));
+        options = [...options, ...class_items];
+    }
+    return options;
 });
 function init_windows(project, is_new) {
     if (is_new) {

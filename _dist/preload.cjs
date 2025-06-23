@@ -12,6 +12,9 @@ const electronAPI = {
     open_project: async (file_path, is_new) => {
         return ipcRenderer.invoke('open_project', file_path, is_new);
     },
+    get_relation_options: async (property) => {
+        return ipcRenderer.invoke('get_relation_options', property);
+    },
     ready: async () => {
         return ipcRenderer.invoke('ready');
     }

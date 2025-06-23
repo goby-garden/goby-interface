@@ -1,5 +1,6 @@
 <script lang="ts">
     import {onMount} from 'svelte';
+    import {context} from '$lib/workspace/store.svelte';
     import { instance } from '$lib/index.svelte.js';
     import { browser } from '$app/environment';
     import type Project from 'goby-database';
@@ -7,22 +8,28 @@
     import ClassBlock from '$lib/workspace/blocks/ClassBlock.svelte';
     import {combinedBlockList} from '$lib/workspace/utils.js';
 
-    let workspace:ReturnType<Project["retrieve_workspace_contents"]>=$state({blocks:[],items:[],classes:[]})
-
-    let {blocks,items,classes} = $derived(workspace);
+    let {blocks,items,classes} = $derived(context.workspace);
 
 
-    let blocks_iterable=$derived(combinedBlockList({blocks,classes}))
+    let blocks_iterable=$derived.by(()=>{
+        return combinedBlockList({blocks,classes});
+    })
 
         
     
     onMount(async()=>{
         if(instance.electron){
-            workspace=await instance.electron.get_workspace();
+            const fetched_workspace=await instance.electron.get_workspace();
+            context.workspace={
+                blocks:[...context.workspace.blocks,...fetched_workspace.blocks],
+                classes:[...context.workspace.classes,...fetched_workspace.classes],
+                items:[...context.workspace.items,...fetched_workspace.items]
+            }
         }
     })
     
     $inspect('blocks_iterable',blocks_iterable)
+    $inspect('classes',classes)
 
     
 
