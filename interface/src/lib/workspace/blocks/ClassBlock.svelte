@@ -13,7 +13,7 @@
     let {data} = block;
 
     let item_focused = $derived.by(()=>{
-        const v= data?.items.some((item)=>{
+        const v= data?.items.loaded.some((item)=>{
             return match_focus_element({
                 block_id:block.block_id,
                 class_id:data.id,
@@ -51,10 +51,10 @@
             </div>
         </div>
         <div role="rowgroup">
-            {#each data.items || [] as item,i}
+            {#each data.items.loaded || [] as item,i}
                 {@const item_identification={block_id:block.block_id,class_id:data.id,item_id:item.system_id}}
                 {@const focused = match_focus_element(item_identification) }
-                <div role="row" class="item class-table-row" class:focused class:last-item={i==data.items.length-1}>
+                <div role="row" class="item class-table-row" class:focused class:last-item={i==data.items.loaded.length-1}>
                     {#each data.properties as property}
                     <div role="cell" class="class-table-cell" data-prop-type="{property.type}">
                         {#if property.type=='data'}
@@ -117,7 +117,8 @@
         /* grid-template-columns:repeat(var(--n-properties),minmax(180px, 1fr)); */
         grid-template-rows:repeat(auto,40px);
         /* min-width:calc(var(--n-properties) * 180px); */
-        gap:0px 14px;
+        /* gap:0px 14px; */
+        gap:0px 45px;
 
         --default-col-width:180px;
     }
@@ -158,10 +159,21 @@
 
     }
 
+    
     .properties-table-header,
     .item:not(.last-item){
         border-bottom:1px solid #E5E5E5;
     }
+
+    .properties-table-header{
+        position:sticky;
+        top:30px;
+        background-color:white;
+        z-index:5;
+        padding-top:15px;
+        /* border-bottom:1px solid black; */
+    }
+
 
     div[role="rowgroup"]{
         display:contents;

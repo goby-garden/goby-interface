@@ -1,6 +1,20 @@
 
+#### <span class="date">6/25/2025</span>
+
+For my future reference, since I’ve had to do it a few times between this project and work: if you’re trying to [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce) an array to an object with generic `[key:string]:value` pairs, you need to do a few things for it to work and for typescript to stop complaining:
+
+- define the param type of the `accumulator` in the callback function to be a generic object.
+- have the callback function return the `accumulator` object (I thought this was a typescript thing but it’s occurring to me that this is probably just how `reduce` works; it needs the return to track the accumulator across each iteration)
+
 
 #### <span class="date">6/23/2025</span>
+
+When it comes time to start writing data from the interface back to the project databases, I think I can use whatever “write” procedure I set up as a centralized hook to re-fetch affected class data. E.g.:
+
+- when relation props are modified, trigger linked classes to re-fetch, either wholesale or limited to columns/rows (or even cells)
+- similarly when label text changes, trigger classes that select from it to re-fetch.
+
+#### <span class="date">6/22/2025</span>
 
 I’m leaving off tonight halfway through implementing the relation property cell display - got pretty far but I’m figuring out my approach to retrieving and caching data as I build this, and there’s a lot more to go than what I have the time to do before bed. 
 

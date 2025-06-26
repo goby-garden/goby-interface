@@ -9,6 +9,9 @@ const electronAPI = {
     get_workspace: async () => {
         return ipcRenderer.invoke('get_workspace');
     },
+    get_class_meta: async (class_id) => {
+        return ipcRenderer.invoke('get_class_meta', class_id);
+    },
     open_project: async (file_path, is_new) => {
         return ipcRenderer.invoke('open_project', file_path, is_new);
     },

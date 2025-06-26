@@ -115,8 +115,10 @@ ipcMain.handle('get_relation_options',async function(event,property:Property){
   for(const {class_id} of property.relation_targets ?? []){
     const class_items=project.retrieve_class_items({
       class_id,
-      slim:true
-    }).map((item)=>({
+      pagination:{
+        property_range:'slim'
+      }
+    }).loaded.map((item)=>({
       ...item,
       class_id
     }))

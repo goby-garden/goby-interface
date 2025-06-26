@@ -80,13 +80,18 @@ ipcMain.handle('get_workspace', async function (event) {
         return workspace_contents;
     }
 });
+ipcMain.handle('get_class_meta', async function (event, class_id) {
+    // const class_meta=project.retrieve_class
+});
 ipcMain.handle('get_relation_options', async function (event, property) {
     let options = [];
     for (const { class_id } of property.relation_targets ?? []) {
         const class_items = project.retrieve_class_items({
             class_id,
-            slim: true
-        }).map((item) => ({
+            pagination: {
+                property_range: 'slim'
+            }
+        }).loaded.map((item) => ({
             ...item,
             class_id
         }));
