@@ -1,3 +1,20 @@
+#### <span class="date">7/20/2025</span>
+
+Following up on my thoughts [here](https://www.are.na/block/37686352) about the selection field display, what I’d like to set up is two display modes:
+
+- A: listed with the little square “bullets” and no line breaks by default
+- B: collapsed into a wrapping list with a fixed width 
+   - undecided on whether it should retain the degree of conventional tag UI that I had in my initial sketches
+   - coordinately with this, unsure if items should wrap inline-block style or wrap together like a regular comma-separated list
+   
+For now, I will focus on A, and not add any max width setting logic. I will also not worry about max _height_/truncation logic, which may be something I want to look into eventually
+
+And I’d like to explore a mode of interaction that feels more inline:
+
+- rather than opening up a complete edit overlay, the ability to click on individual items to select/remove them
+- To add new items, you click on an unpopulated area and it gives you a text field plus a list of options you can select from, which gets filtered as you type. If nothing matches, you can hit enter to just add it as a new item, which then gets added to the corresponding selected class
+    - it occurs to me that I probably also want some indication of this “linked” action, e.g. a little snackbox that pops up when you do this telling you it’s generated a new item in the corresponding class
+
 
 #### <span class="date">6/25/2025</span>
 

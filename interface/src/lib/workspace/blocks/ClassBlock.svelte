@@ -113,7 +113,7 @@
     .class-table-view{
         grid-column:2 / 3;
         display:grid;
-        grid-template-columns:repeat(var(--n-properties),min-content);
+        grid-template-columns:repeat(var(--n-properties),max-content);
         /* grid-template-columns:repeat(var(--n-properties),minmax(180px, 1fr)); */
         grid-template-rows:repeat(auto,40px);
         /* min-width:calc(var(--n-properties) * 180px); */
