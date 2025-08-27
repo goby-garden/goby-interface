@@ -1,8 +1,8 @@
-#### <span class="date">8/27/2025</span> - Some meditations on focus state
+#### <span class="date">8/26/2025</span> - Some meditations on focus state
 
 _A clarification:_ by focus state I mean a lot more than native input focuses; I’m thinking about all the custom interface elements which have some sort of transitory “editing” state or dialog box, and which typically close out when you interact with something outside of them.
 
-**Behavior:**: 
+**Behavior:**
 
 I’m debating about what should happen when you click on another focusable element when you are already focused. Should it:
 
@@ -11,7 +11,7 @@ I’m debating about what should happen when you click on another focusable elem
     - PRO: less friction if you are going between quickly inputs
     - CON: reduces ability to escape to a passive/rest state with the mouse
 2. simply unfocus the current thing, and require you to click again to focus anything else 
-    - the behavior of many application input fields
+    - this is the behavior of many application input fields
     - PRO: preserves the ability to go back to a rest state at any time by clicking anywhere
     - CON: creates a lot more friction if someone is moving between fields
 
