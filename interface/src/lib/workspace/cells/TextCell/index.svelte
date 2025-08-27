@@ -1,6 +1,6 @@
 <script lang="ts">
     import {context,match_focus_element} from '$lib/workspace/store.svelte';
-    import CellWrapper from "./CellWrapper.svelte";
+    import CellWrapper from "../CellWrapper.svelte";
     let {
         value = $bindable(),
         focused = $bindable(false),

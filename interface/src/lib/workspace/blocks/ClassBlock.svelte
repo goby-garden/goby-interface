@@ -2,8 +2,8 @@
     import { instance } from '$lib/index.svelte.js';
     import {match_focus_element,context} from '$lib/workspace/store.svelte';
     import type {BlockIterable} from '$lib/workspace/utils.ts';
-    import TextCell from '$lib/workspace/cells/TextCell.svelte';
-    import SelectCell from '$lib/workspace/cells/SelectCell.svelte';
+    import TextCell from '$lib/workspace/cells/TextCell/index.svelte';
+    import SelectCell from '$lib/workspace/cells/SelectCell/index.svelte';
     let {
         block = $bindable()
     }:{
@@ -138,7 +138,7 @@
 
     .class-block:not(.item-focused) .item.class-table-row:hover,
     .item.focused{
-        background-color:#FBFBFB;
+        /* background-color:#FBFBFB; */
     }
 
     .class-block.item-focused .item.class-table-row:not(.focused){

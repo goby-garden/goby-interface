@@ -1,21 +1,21 @@
 <script lang="ts">
+    import type {RelationItem} from './types';
     import {context} from '$lib/workspace/store.svelte';
     import type { ClassData, Property } from "goby-database/dist/types";
-    import CellWrapper from "./CellWrapper.svelte";
-    
+    import CellWrapper from "../CellWrapper.svelte";
+    import ItemOption from './ItemOption.svelte';
+    import EditField from './EditField.svelte';
+     
     let {
         value,
         max_values,
-        property
+        property,
+        focused = $bindable(false),
     }:{
-       value:{
-        class_id:number,
-        item_id:number,
-        // used for label
-        [key:string]:any,
-       }[],
+       value:RelationItem[],
        max_values:number | null,
-       property:Property
+       property:Property,
+       focused?:boolean
     } = $props();
 
     const multiple = max_values==null || max_values>1;
@@ -38,36 +38,43 @@
     // $inspect('value',value,'max_values',max_values)
 </script>
 
-<CellWrapper>
-    <ul class="select-value display" class:multiple>
+<CellWrapper fill_height>
+    <div class="select-field">
+        <ul class="select-value display" class:multiple class:focused>
         {#each value as item}
-            {@const label_prop=target_labels[item.class_id]}
-            {@const label = label_prop ? item[`user_${label_prop}`] : null}
-            <!-- {@const targetClass=context.workspace.classes.find((c)=>c.id ==item.class_id)} -->
-            <li class='selection'>{label}</li>
-        {/each}
-    </ul>
-    <!-- {#each value as item}
-
-    {/each} -->
+                <li class='selection'>
+                    <ItemOption {item} {target_labels} />
+                </li>
+            {/each}
+        </ul>
+        <div class="edit-field-wrapper" class:focused>
+            <EditField {focused} />
+        </div>
+    </div>
+    
+   
 </CellWrapper>
 
 
 <style>
+    .select-field{
+        min-height:100%;
+        width:100%;
+    }
     ul{
         display:flex;
         flex-flow:column nowrap;
         gap:5px;
         line-height:1.3em;
     }
-    .selection::before{
-        content:'';
-        height:4px;
-        width:4px;
-        vertical-align:middle;
-        margin-right:4px;
-        background-color:rgba(255, 0, 0, 0.484);
-        display:inline-block;
-        transform:translateY(-1px);
+
+    .edit-field-wrapper{
+        margin-top:2px;
+        opacity:0;
+        transition:opacity 0.3s;
+    }
+
+    .edit-field-wrapper.focused{
+        opacity:1;
     }
 </style>

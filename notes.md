@@ -1,3 +1,58 @@
+#### <span class="date">8/27/2025</span> - Some meditations on focus state
+
+_A clarification:_ by focus state I mean a lot more than native input focuses; I’m thinking about all the custom interface elements which have some sort of transitory “editing” state or dialog box, and which typically close out when you interact with something outside of them.
+
+**Behavior:**: 
+
+I’m debating about what should happen when you click on another focusable element when you are already focused. Should it:
+
+1. immediately focus the next thing
+    - this is the default behavior of most inputs on the web
+    - PRO: less friction if you are going between quickly inputs
+    - CON: reduces ability to escape to a passive/rest state with the mouse
+2. simply unfocus the current thing, and require you to click again to focus anything else 
+    - the behavior of many application input fields
+    - PRO: preserves the ability to go back to a rest state at any time by clicking anywhere
+    - CON: creates a lot more friction if someone is moving between fields
+
+I think the challenge with a “table” style presentation is that inputs often fill the entire viewport, so there’s no good place to click “off”. I’m reminded of visiting my father’s office as a child, and playing on the sticky mats installed in door frames to minimize dust in the lab. Using approach #1 on a table would sort of feel like that: wherever you click (step), the page (floor) lightly grabs onto you. Accordingly I think in these sorts of interfaces, developers often opt for approach #2.
+
+_However_, as a user of other table interfaces, I get really frustrated with the slowness and dissonance that this click-to-exit system creates. It’s like once there’s one thing focused, a forcefield is erected in front of the other interactive elements, and I find myself constantly double clicking to break through it. 
+
+So I am inclined towards approach #1. Some ideas to mitigate the “stickiness”:
+
+- offer some kind of universal `close`/`esc` button, which lives in a corner of the viewport and appears whenever you have something open. 
+   - If I do label it `esc`, it could also act as a hint/incentive to use the keyboard Escape key to return to the rest state.
+- be a little more conservative with the clickable regions to focus something, e.g. for text strings make the actual text region the clickable part instead of the whole cell with all its white space.
+
+
+**Implementation**: 
+
+My current approach to tracking focus state (from when I set up text field editing a few months ago) is a store which records relevant identifiers for the element currently focused (e.g. class id, block id, etc and the svelte-generated $props.id() for the component). I’m worried that this will get a little convoluted, and I don’t entirely remember why I took that approach, although I remember agonizing over it a little bit. 
+
+Keep it or not though, I think it’s clear what my focus system needs to be able to do:
+
+- record the current item that is focused, so that every item can check whether it _is_ that focusable element can compare itself and display accordingly
+- end focus on the currently focused element if someone clicks elsewhere
+- (here is the tricky one) accomodate, through one form or another, _nested_ search, so that an element can be focused inside of another focused element
+
+I’d like to achieve all this with the most data and UI-agnostic approach possible.
+
+Maybe what I do is something really absurdly simple and DOM-based:
+
+- utilize `$props.id()` to generate element IDs for “focusable” elements
+- when an element becomes focused, its ID gets added to an array store
+    - when you focus on a nested element, before adding it, walk up the array store and use `contains()` to search for parent-child relationships to each element;
+        - if they exist, keep the parent focused
+        - if not, remove that from the focused items
+- in any individual component, to check if it’s focused you just search for its ID in the array store.
+
+Yeah this actually sounds pretty good to me. The one thing that concerns me is that if I need any kind of component to _keep track of_ things like whether its parent is focused, the `contains()` may become a performance issue. Maybe there’s a simple (albeit annoying) workaround like passing a prop called `parent_focused` down from above.
+
+
+...or maybe another option is... to not keep track of this globally (lol)? I suppose what I could do is just listen to mousedown events in focused components and decide whether to close them based on whether the thing clicked on is a child element.
+
+
 #### <span class="date">7/20/2025</span>
 
 Following up on my thoughts [here](https://www.are.na/block/37686352) about the selection field display, what I’d like to set up is two display modes:
