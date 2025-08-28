@@ -3,6 +3,9 @@
     font-size:15px;
     line-height:22px;
     --col-light:#f8f6f6;
+
+    --col-light-bg:#fafafa;
+    --col-border:#E5E5E5;
 }
 
 .system{

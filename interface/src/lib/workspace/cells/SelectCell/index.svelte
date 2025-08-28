@@ -9,14 +9,14 @@
     let {
         value,
         max_values,
-        property,
-        focused = $bindable(false),
+        property
     }:{
        value:RelationItem[],
        max_values:number | null,
        property:Property,
-       focused?:boolean
     } = $props();
+
+    let svelte_id=$props.id();
 
     const multiple = max_values==null || max_values>1;
 
@@ -33,22 +33,42 @@
         return acc;
     },{}))
 
-    $inspect('target_labels',target_labels)
+
+    let select_field:HTMLElement | undefined=$state();
+
+    function handle_click(e:MouseEvent){
+        if(select_field&&e.target instanceof Node){
+            focused=select_field.contains(e.target);
+        }
+    }
+    $effect(()=>{
+        // NOTE: generalize this!
+        if(focused){
+            window.addEventListener('click',handle_click)
+        }else{
+            window.removeEventListener('click',handle_click)
+        }
+    })
+
+
+
+    let focused=$state(false);
 
     // $inspect('value',value,'max_values',max_values)
 </script>
 
 <CellWrapper fill_height>
-    <div class="select-field">
-        <ul class="select-value display" class:multiple class:focused>
+    <div class="select-field" class:focused bind:this={select_field}>
+        <button class="focus-edit-field" aria-label="Edit select field" onclick={()=>focused=true}></button>
+        <ul class="select-value display" class:multiple>
         {#each value as item}
                 <li class='selection'>
                     <ItemOption {item} {target_labels} />
                 </li>
             {/each}
         </ul>
-        <div class="edit-field-wrapper" class:focused>
-            <EditField {focused} />
+        <div class="edit-field-wrapper">
+            <EditField bind:focused />
         </div>
     </div>
     
@@ -58,23 +78,66 @@
 
 <style>
     .select-field{
-        min-height:100%;
+        /* min-height:100%; */
         width:100%;
+        position:relative;
+        
     }
+
+    
+   
+
     ul{
         display:flex;
         flex-flow:column nowrap;
         gap:5px;
         line-height:1.3em;
+        position:relative;
+        z-index:3;
+        pointer-events:none;
+        
+    }
+
+    ul{
+        /* transition:background-color 0.3s; */
+        
+    }
+
+    /* .select-field:has(.focus-edit-field:hover) ul, */
+    /* .select-field:has(.edit-field-wrapper:hover) ul, */
+    .select-field.focused ul{
+        /* transition-delay:0.1s; */
+        background-color:var(--col-light-bg);
+    }
+
+
+    .focus-edit-field{
+        z-index:1;
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
     }
 
     .edit-field-wrapper{
+        position:relative;
+        z-index:3;
         margin-top:2px;
         opacity:0;
-        transition:opacity 0.3s;
+        /* transition:opacity 0.3s; */
+        
     }
 
-    .edit-field-wrapper.focused{
+    .focused .edit-field-wrapper{
+        z-index:20;
+    }
+
+
+
+     .focused .edit-field-wrapper,
+     /* .select-field:has(.focus-edit-field:hover) .edit-field-wrapper, */
+     .edit-field-wrapper:hover{
         opacity:1;
     }
 </style>

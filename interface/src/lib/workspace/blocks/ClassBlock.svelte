@@ -1,6 +1,5 @@
 <script lang="ts">
     import { instance } from '$lib/index.svelte.js';
-    import {match_focus_element,context} from '$lib/workspace/store.svelte';
     import type {BlockIterable} from '$lib/workspace/utils.ts';
     import TextCell from '$lib/workspace/cells/TextCell/index.svelte';
     import SelectCell from '$lib/workspace/cells/SelectCell/index.svelte';
@@ -11,17 +10,6 @@
     } = $props();
 
     let {data} = block;
-
-    let item_focused = $derived.by(()=>{
-        const v= data?.items.loaded.some((item)=>{
-            return match_focus_element({
-                block_id:block.block_id,
-                class_id:data.id,
-                item_id:item.system_id
-            });
-        })
-        return v;
-    })
 
     // instance
 
@@ -38,7 +26,7 @@
     
 </script>
 {#if data}
-<div class="class-block" class:item-focused={item_focused}>
+<div class="class-block">
     <div class="class-meta">
         <h3 class="class-name"><span class="class-icon"></span>{data.name}</h3>
     </div>
@@ -53,8 +41,7 @@
         <div role="rowgroup">
             {#each data.items.loaded || [] as item,i}
                 {@const item_identification={block_id:block.block_id,class_id:data.id,item_id:item.system_id}}
-                {@const focused = match_focus_element(item_identification) }
-                <div role="row" class="item class-table-row" class:focused class:last-item={i==data.items.loaded.length-1}>
+                <div role="row" class="item class-table-row" class:last-item={i==data.items.loaded.length-1}>
                     {#each data.properties as property}
                     <div role="cell" class="class-table-cell" data-prop-type="{property.type}">
                         {#if property.type=='data'}
@@ -87,7 +74,7 @@
 <style>
     .class-block{
         position:relative;
-        border:1px solid #E5E5E5;
+        border:1px solid var(--col-border);
         border-bottom:none;
         /* padding:20px; */
         /* padding-inline:14px;
@@ -136,24 +123,6 @@
         width:min-content ;
     }
 
-    .class-block:not(.item-focused) .item.class-table-row:hover,
-    .item.focused{
-        /* background-color:#FBFBFB; */
-    }
-
-    .class-block.item-focused .item.class-table-row:not(.focused){
-        pointer-events:none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-    }
-
-    /* TODO: try to come up with a more systematic way of doing this that doesn’t relay on :global */
-    /* maybe use --variables */
-    .class-block.item-focused .item.class-table-row:not(.focused) :global(.text-value.edit){
-        display:none;
-    }
-
     .item{
         padding-block:10px 7px;
 
@@ -162,7 +131,7 @@
     
     .properties-table-header,
     .item:not(.last-item){
-        border-bottom:1px solid #E5E5E5;
+        border-bottom:1px solid var(--col-border);
     }
 
     .properties-table-header{

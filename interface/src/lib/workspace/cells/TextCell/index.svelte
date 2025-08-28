@@ -1,15 +1,13 @@
 <script lang="ts">
-    import {context,match_focus_element} from '$lib/workspace/store.svelte';
+    import {context} from '$lib/workspace/store.svelte';
     import CellWrapper from "../CellWrapper.svelte";
     let {
         value = $bindable(),
-        focused = $bindable(false),
         wrap = false,
         parent
     }:{
         value:string,
         parent:{block_id:number,class_id:number,item_id:number}
-        focused?:boolean,
         wrap?:boolean
     } = $props();
 
@@ -17,22 +15,7 @@
 
     let textEditor:HTMLDivElement;
 
-    $effect(()=>{
-        if(focused){
-            if(!match_focus_element(parent)){
-                console.log('set focus')
-                context.focus_element={
-                    ...parent,
-                    svelte_id
-                };
-            }
-        }else if(match_focus_element(parent)){
-            requestAnimationFrame(()=>{
-                 console.log('exit focus')
-                 context.focus_element=null;
-            })            
-        }
-    })
+    let focused=$state(false);
 
     function handle_keydown(e:KeyboardEvent){
         if(e.key=='Escape'){

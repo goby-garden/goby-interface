@@ -11,17 +11,46 @@
 
     let label_prop=$derived(target_labels[item.class_id]);
     let label:string | null = $derived(label_prop ? item[`user_${label_prop}`] : null);
-    
+
 </script>
 
-<button>{label}</button>
+<button>
+    <span class="option-inner"><span class="item-icon"></span>{label}</span>
+   
+</button>
 
 <style>
     button{
         background:none;
+        pointer-events:all;
+        /* transition:background-color 0.3s; */
+        position:relative;
     }
 
-    button::before{
+    .option-inner{
+        position:relative;
+        z-index:3;
+    }
+    
+
+    button::after{
+        z-index:1;
+        content:'';
+        position:absolute;
+        width:100%;
+        height:calc(100% + 6px);
+        left:0;
+    }
+    button::after{
+        top:-3px;
+    }
+
+    button:hover{
+        /* background-color:var(--col-light-bg); */
+        background-color:#f3f3f3;
+    }
+
+    button .item-icon{
         content:'';
         height:4px;
         width:4px;
