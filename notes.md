@@ -1,6 +1,61 @@
-#### <span class="date">8/26/2025</span> - Some meditations on focus state
+#### <span class="date">9/1/2025</span>
 
-_A clarification:_ by focus state I mean a lot more than native input focuses; I’m thinking about all the custom interface elements which have some sort of transitory “editing” state or dialog box, and which typically close out when you interact with something outside of them.
+I’m now in the position I was contemplating in my 6/23/2025 entry, deciding how to handle refreshing the interface after saving changes to the database. I do like the rough approach I thought of there, of writing the changes to the database, and then on the front-end, having all the items that need that info simply fetch what changed for them.
+
+---
+
+I wonder if when you add an item via the selection dropdown, it will feel disorienting, since the height of the cell will change and the dropdown will get bumped down. One possibility is to instantly set scroll with javascript after that happens to preserve the place of the dropdown in its pre-interacted state.
+
+---
+
+Some steps left to finish hooking up selection fields with project databases:
+- [ ] create the ability in goby-database to remove relations (you can only _add_ them right now)
+- [ ] get the “new item” buttons working
+- [ ] propagating changes to all the other relations for which they are relevant (as discussed above)
+
+Future tasks:
+
+- more to do on selection fields:
+    - [ ] in the list of relation options, I need to filter out options in two-sided relationships where the corresponding property in the item has already hit its max values.
+        - I realize this may read as gibberish — here is an example: A child can have up to two parents. Let’s say in a project representing family trees, I’ve already set Toby’s parents to be Muffy and Gerald. So in the “children” property, Toby should no longer show up as an option
+    - [ ] design and implement different rendering for single-select (max_values=1)
+        - I’m thinking that if there’s a selected item, it will fade to a low opacity, with the search input overlayed directly on top of it (made clear by the text cursor flashing at the beginning of the field)
+    - [ ] add an X icon to relation option search input to “clear” it 
+        - can be in the position where the bullet point is for the items themselves, so the left alignment matches
+    - [ ] pagination and efficient caching of items
+- other cell types:
+    - [ ] resource and boolean cell display
+    - [ ] saving text changes back to the database
+- user-configured styles:
+    - [ ] color palette for classes
+    - [ ] controlled column widths and text/item wrapping
+- general functionality and styles:
+    - [ ] gradient on sticky prop header row?
+    - [ ] intuitive tabbing and arrow key navigation
+        - tabbing should take you _down_ to the same property in the next item
+
+#### <span class="date">8/31/2025</span>
+
+I now have a basic select field editing/focus state set up. I spent a lot of time fiddling with the hover states on the various parts of the field: the option search input itself, the already-selected items, and the cell background. I settled for now on not highlighting the latter at all, either when you hover or click into the input, because it feels very heavy and startling, especially for hover. I like the feeling of “editing in place”, without feeling like you’re going into some special editing state/overlay, that you get from this approach, in conjunction with the strategy around focus states that I detailed below. 
+
+One other thing I may consider in the future is some sort of cursor indicator, ideally not replacing the cursor itself but just attaching an icon or message to it that gives context to what clicking will do. E.g. if you click on a selected item in a selection field when you have the editor open, you may want it to simply remove the item from the selection instead of “focusing” it.
+
+---
+
+Next steps are figuring out how to actually retrieve the options for a selection. This is tricky because it involves two factors in conjunction:
+
+- pagination
+- filter by label property string match
+
+I won’t have any real cases of pagination to deal with for now, because the scale of my test database is pretty minimal. So I’m inclined to put that aside for now, and just fetch the whole list of options (dynamically, when you open the select input). 
+
+But the question is whether to implement the filtering as a back-end part of the item retrieval. I think this will eventually be necessary to get the pagination to function properly. 
+
+(realizing just now that two months ago I created a function to handle this retrieval, `get_relation_options`, though it doesn’t have any string matching consideration)
+
+#### <span class="date">8/26/2025</span>
+
+Some meditations on focus state (by which I mean a lot more than native input focuses; I’m thinking about all the custom interface elements which have some sort of transitory “editing” state or dialog box, and which typically close out when you interact with something outside of them):
 
 **Behavior:**
 
@@ -134,8 +189,7 @@ I’m leaning towards loading project data in a distributed way, on a component-
 
 #### <span class="date">4/7/2025</span>
 
-I am feeling a little beleaguered after spending many hours this weekend trying to get the electron program to start, 
-amidst challenges with [JS module syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules), typescript compilation, and of course the [classic mismatch](#better-sqlite3-misadventures) between the node version electron uses and the version for which better-sqlite3 was compiled. But with this push, the thing is finally alive, and hopefully I can begin development in earnest on the interface soon!
+I am feeling a little beleaguered after spending many hours this weekend trying to get the electron program to start, amidst challenges with [JS module syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules), typescript compilation, and of course the [classic mismatch](#better-sqlite3-misadventures) between the node version electron uses and the version for which better-sqlite3 was compiled. But with this push, the thing is finally alive, and hopefully I can begin development in earnest on the interface soon!
 
 
 #### <span class="date">4/5/2025</span>

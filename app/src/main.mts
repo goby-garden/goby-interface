@@ -1,8 +1,7 @@
 import { app, BrowserWindow, ipcMain, Menu, dialog,webContents } from 'electron';
 import { BrowserWindowConstructorOptions } from 'electron';
 import Project from 'goby-database';
-// import type Project from 'goby-database/dist/index.d.ts';
-import type {ApplicationWindow,Property,ClassRow} from 'goby-database/dist/types';
+import type {ApplicationWindow,Property,ClassRow, ItemRelationSide} from 'goby-database/dist/types';
 import path from 'path';
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
@@ -110,8 +109,16 @@ ipcMain.handle('get_class_meta',async function(event,class_id:number){
   // const class_meta=project.retrieve_class
 })
 
+ipcMain.handle('make_relations',async function(event,relations:[input_1:ItemRelationSide,input_2:ItemRelationSide][]){
+  project.action_make_relations(relations);
+  return true;
+})
+
 ipcMain.handle('get_relation_options',async function(event,property:Property){
   let options:ClassRow[] = [];
+
+  // NOTE: this should cache more effectively in the future,
+  // and to that end be moved to the frontend so that it can save the items for each class
   for(const {class_id} of property.relation_targets ?? []){
     const class_items=project.retrieve_class_items({
       class_id,

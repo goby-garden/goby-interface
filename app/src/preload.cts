@@ -1,4 +1,4 @@
-import type {Property} from 'goby-database/dist/types';
+import type {ItemRelationSide, Property} from 'goby-database/dist/types';
 
 const { contextBridge, ipcRenderer } = require('electron')
 
@@ -19,6 +19,9 @@ const electronAPI={
     },
     get_relation_options:async (property:Property)=>{
       return ipcRenderer.invoke('get_relation_options',property)
+    },
+    make_relations:async (relations:[input_1:ItemRelationSide,input_2:ItemRelationSide][])=>{
+      return ipcRenderer.invoke('make_relations',relations);
     },
     ready:async ()=>{
       return ipcRenderer.invoke('ready');

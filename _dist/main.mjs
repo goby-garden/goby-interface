@@ -83,8 +83,14 @@ ipcMain.handle('get_workspace', async function (event) {
 ipcMain.handle('get_class_meta', async function (event, class_id) {
     // const class_meta=project.retrieve_class
 });
+ipcMain.handle('make_relations', async function (event, relations) {
+    project.action_make_relations(relations);
+    return true;
+});
 ipcMain.handle('get_relation_options', async function (event, property) {
     let options = [];
+    // NOTE: this should cache more effectively in the future,
+    // and to that end be moved to the frontend so that it can save the items for each class
     for (const { class_id } of property.relation_targets ?? []) {
         const class_items = project.retrieve_class_items({
             class_id,

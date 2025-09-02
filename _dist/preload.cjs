@@ -18,6 +18,9 @@ const electronAPI = {
     get_relation_options: async (property) => {
         return ipcRenderer.invoke('get_relation_options', property);
     },
+    make_relations: async (relations) => {
+        return ipcRenderer.invoke('make_relations', relations);
+    },
     ready: async () => {
         return ipcRenderer.invoke('ready');
     }

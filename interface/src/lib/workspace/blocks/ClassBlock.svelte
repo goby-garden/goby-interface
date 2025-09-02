@@ -46,7 +46,6 @@
                     <div role="cell" class="class-table-cell" data-prop-type="{property.type}">
                         {#if property.type=='data'}
                             {#if property.data_type=='string'}
-                            
                                 <TextCell 
                                     bind:value={item['user_'+property.name]} 
                                     parent= {item_identification}
@@ -54,14 +53,14 @@
                             {/if}
                         {:else if property.type=='relation'}
                             <SelectCell 
-                                value={item['user_'+property.name] ?? []}
+                                bind:value={item['user_'+property.name]}
                                 max_values={property.max_values}
+                                parent={item_identification}
                                 {property}
                             />
                         {/if}
                     </div>
                     {/each}
-                    <!-- <div class="cell">{item.user_Name}</div> -->
                 </div>
             {/each}
         </div>

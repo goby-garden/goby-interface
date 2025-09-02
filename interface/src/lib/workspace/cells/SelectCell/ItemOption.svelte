@@ -3,10 +3,12 @@
 
     let {
         item,
-        target_labels
+        target_labels,
+        click_handler = ()=>{}
     }:{
         item:RelationItem,
-        target_labels:LabelProperties
+        target_labels:LabelProperties,
+        click_handler?:(info:{e:MouseEvent,item:RelationItem})=>void
     } = $props();
 
     let label_prop=$derived(target_labels[item.class_id]);
@@ -14,7 +16,7 @@
 
 </script>
 
-<button>
+<button onclick={(e)=>click_handler({e,item})}>
     <span class="option-inner"><span class="item-icon"></span>{label}</span>
    
 </button>
@@ -25,6 +27,7 @@
         pointer-events:all;
         /* transition:background-color 0.3s; */
         position:relative;
+        text-align:left;
     }
 
     .option-inner{
@@ -46,8 +49,8 @@
     }
 
     button:hover{
-        /* background-color:var(--col-light-bg); */
-        background-color:#f3f3f3;
+        background-color:var(--col-highlight,var(--col-light-bg));
+        /* background-color:#f3f3f3; */
     }
 
     button .item-icon{

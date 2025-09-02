@@ -1,7 +1,7 @@
 // NOTE: should centralize this in the future
 export type RelationItem={
     class_id:number;
-    item_id:number;
+    system_id:number;
     // used for label
     [key:string]:any;
 }
