@@ -29,6 +29,6 @@
 		"wait-on": "^8.0.2"
 	},
 	"dependencies": {
-		"goby-database": "^2.2.24"
+		"goby-database": "^2.2.25"
 	}
 }

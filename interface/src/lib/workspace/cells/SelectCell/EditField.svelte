@@ -2,7 +2,8 @@
     import { instance } from '$lib/index.svelte.js';
     import type { ClassData, Property } from 'goby-database/dist/types';
     import ItemOption from './ItemOption.svelte';
-    import type { LabelProperties, RelationItem } from './types';
+    import type { LabelProperties, RelationItem } from '$lib/types';
+    import { mission_control } from '$lib/workspace/workspace.svelte';
     let {
         focused=$bindable(false),
         target_labels,
@@ -46,12 +47,11 @@
             option_input?.focus();
         }
         // this will need to be cached more effectively in the future.
-        // see get_relation_options ipcmain handler for more info
-        if(instance.electron&&filtered_options.length==0){
+        // see get_relation_options mission control for more info
+        if(filtered_options.length==0){
             try{
-                let fetched=await instance.electron.get_relation_options($state.snapshot(property));
-                
-                filtered_options=fetched;
+                const fetched=await mission_control.get_relation_options($state.snapshot(property));
+                filtered_options=fetched || [];
             }catch(e){
                 console.log(e);
             }

@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type {RelationItem} from './types';
+    import type {RelationItem} from '$lib/types';
     import { instance } from '$lib/index.svelte.js';
-    import {context} from '$lib/workspace/store.svelte';
+    import {context, mission_control} from '$lib/workspace/workspace.svelte.js';
     import type { ClassData, Property } from "goby-database/dist/types";
     import CellWrapper from "../CellWrapper.svelte";
     import ItemOption from './ItemOption.svelte';
@@ -64,34 +64,27 @@
         item:RelationItem
     }){
         window.requestAnimationFrame(()=>{
+            // TODO: revise in future if I allow targets from the same class
+            const corresponding_target=property.relation_targets?.find((target)=>target.class_id==item.class_id);
             if(action=='add'){                
                 value=[
                     ...(value || []),
                     item
                 ]
                 
-                // TODO: revise in future if I allow targets from the same class
-                const corresponding_target=property.relation_targets?.find((target)=>target.class_id==item.class_id);
-
-                if(instance.electron){
-                    instance.electron.make_relations([
-                        [
-                            {
-                                class_id:parent.class_id,
-                                item_id:parent.item_id,
-                                prop_id:property.id,
-                            },
-                            {
-                                class_id:item.class_id,
-                                item_id:item.system_id,
-                                prop_id:corresponding_target?.prop_id || undefined
-                            }
-                        ]
-                    ])
-                }
             }else if(action=='remove'){
                 value=(value || []).filter((sel)=>!(sel.class_id==item.class_id && sel.system_id==item.system_id));
             }
+
+            mission_control.edit_relations([
+                {
+                    change:action,
+                    sides:[
+                        { class_id:parent.class_id, item_id:parent.item_id, prop_id:property.id },
+                        { class_id:item.class_id, item_id:item.system_id, prop_id:corresponding_target?.prop_id || undefined }
+                    ]
+                }
+            ])
         })
     }
 

@@ -80,12 +80,13 @@ ipcMain.handle('get_workspace', async function (event) {
         return workspace_contents;
     }
 });
-ipcMain.handle('get_class_meta', async function (event, class_id) {
-    // const class_meta=project.retrieve_class
-});
-ipcMain.handle('make_relations', async function (event, relations) {
-    project.action_make_relations(relations);
+ipcMain.handle('edit_relations', async function (event, relations) {
+    project.action_edit_relations(relations);
     return true;
+});
+ipcMain.handle('retrieve_class_items', async function (event, cls) {
+    const data = project.retrieve_class_items(cls);
+    return data;
 });
 ipcMain.handle('get_relation_options', async function (event, property) {
     let options = [];

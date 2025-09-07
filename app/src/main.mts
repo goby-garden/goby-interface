@@ -105,38 +105,15 @@ ipcMain.handle('get_workspace',async function(event){
 
 })
 
-ipcMain.handle('get_class_meta',async function(event,class_id:number){
-  // const class_meta=project.retrieve_class
-})
-
-ipcMain.handle('make_relations',async function(event,relations:[input_1:ItemRelationSide,input_2:ItemRelationSide][]){
-  project.action_make_relations(relations);
+ipcMain.handle('edit_relations',async function(event,relations:Parameters<Project["action_edit_relations"]>[0]){
+  project.action_edit_relations(relations);
   return true;
 })
 
-ipcMain.handle('get_relation_options',async function(event,property:Property){
-  let options:ClassRow[] = [];
-
-  // NOTE: this should cache more effectively in the future,
-  // and to that end be moved to the frontend so that it can save the items for each class
-  for(const {class_id} of property.relation_targets ?? []){
-    const class_items=project.retrieve_class_items({
-      class_id,
-      pagination:{
-        property_range:'slim'
-      }
-    }).loaded.map((item)=>({
-      ...item,
-      class_id
-    }))
-
-    options = [...options,...class_items]
-  }
-  return options;
+ipcMain.handle('retrieve_class_items',async function(event,cls:Parameters<Project["retrieve_class_items"]>[0]){
+  const data=project.retrieve_class_items(cls);
+  return data;
 })
-
-
-
 
 
 function init_windows(project:Project,is_new:boolean){

@@ -1,31 +1,31 @@
 import type {ItemRelationSide, Property} from 'goby-database/dist/types';
+import type Project from 'goby-database';
 
 const { contextBridge, ipcRenderer } = require('electron')
 
 
 const electronAPI={
+    // electron context management invocations
     open_dialog:async (action:'save' | 'locate file')=>{
       console.log('preload - open_dialog')
       return ipcRenderer.invoke('open_dialog', action);
     },
-    get_workspace: async ()=>{
-      return ipcRenderer.invoke('get_workspace')
-    },
-    get_class_meta: async (class_id:number)=>{
-      return ipcRenderer.invoke('get_class_meta',class_id)
+    ready:async ()=>{
+      return ipcRenderer.invoke('ready');
     },
     open_project:async (file_path:string,is_new:boolean)=>{
       return ipcRenderer.invoke('open_project', file_path, is_new);
     },
-    get_relation_options:async (property:Property)=>{
-      return ipcRenderer.invoke('get_relation_options',property)
+    // goby-database invocations
+    get_workspace: async ():Promise<ReturnType<Project["retrieve_workspace_contents"]>>=>{
+      return ipcRenderer.invoke('get_workspace')
     },
-    make_relations:async (relations:[input_1:ItemRelationSide,input_2:ItemRelationSide][])=>{
-      return ipcRenderer.invoke('make_relations',relations);
+    retrieve_class_items:async (cls:Parameters<Project["retrieve_class_items"]>[0]):Promise<ReturnType<Project["retrieve_class_items"]>> =>{
+      return ipcRenderer.invoke('retrieve_class_items',cls);
     },
-    ready:async ()=>{
-      return ipcRenderer.invoke('ready');
-    }
+    edit_relations:async (relations:Parameters<Project["action_edit_relations"]>[0])=>{
+      return ipcRenderer.invoke('edit_relations',relations);
+    },
   };
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI)

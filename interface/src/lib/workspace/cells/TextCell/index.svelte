@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {context} from '$lib/workspace/store.svelte';
+    import {context} from '$lib/workspace/workspace.svelte';
     import CellWrapper from "../CellWrapper.svelte";
     let {
         value = $bindable(),

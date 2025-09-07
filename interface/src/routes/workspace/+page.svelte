@@ -1,6 +1,6 @@
 <script lang="ts">
     import {onMount} from 'svelte';
-    import {context} from '$lib/workspace/store.svelte';
+    import {context, mission_control} from '$lib/workspace/workspace.svelte';
     import { instance } from '$lib/index.svelte.js';
     import { browser } from '$app/environment';
     import type Project from 'goby-database';
@@ -18,13 +18,11 @@
         
     
     onMount(async()=>{
-        if(instance.electron){
-            const fetched_workspace=await instance.electron.get_workspace();
-            context.workspace={
-                blocks:[...context.workspace.blocks,...fetched_workspace.blocks],
-                classes:[...context.workspace.classes,...fetched_workspace.classes],
-                items:[...context.workspace.items,...fetched_workspace.items]
-            }
+        const fetched_workspace=await mission_control.get_workspace();
+        context.workspace={
+            blocks:[...context.workspace.blocks,...(fetched_workspace?.blocks || [])],
+            classes:[...context.workspace.classes,...(fetched_workspace?.classes || [])],
+            items:[...context.workspace.items,...(fetched_workspace?.items || [])]
         }
     })
     

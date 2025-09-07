@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type {RelationItem,LabelProperties} from './types';
+    import type {RelationItem,LabelProperties} from '$lib/types';
 
     let {
         item,
