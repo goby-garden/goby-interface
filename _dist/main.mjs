@@ -88,24 +88,6 @@ ipcMain.handle('retrieve_class_items', async function (event, cls) {
     const data = project.retrieve_class_items(cls);
     return data;
 });
-ipcMain.handle('get_relation_options', async function (event, property) {
-    let options = [];
-    // NOTE: this should cache more effectively in the future,
-    // and to that end be moved to the frontend so that it can save the items for each class
-    for (const { class_id } of property.relation_targets ?? []) {
-        const class_items = project.retrieve_class_items({
-            class_id,
-            pagination: {
-                property_range: 'slim'
-            }
-        }).loaded.map((item) => ({
-            ...item,
-            class_id
-        }));
-        options = [...options, ...class_items];
-    }
-    return options;
-});
 function init_windows(project, is_new) {
     if (is_new) {
         console.log('new project');

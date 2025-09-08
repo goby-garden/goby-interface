@@ -1,17 +1,9 @@
-#### <span class="date">9/1/2025</span>
-
-I’m now in the position I was contemplating in my 6/23/2025 entry, deciding how to handle refreshing the interface after saving changes to the database. I do like the rough approach I thought of there, of writing the changes to the database, and then on the front-end, having all the items that need that info simply fetch what changed for them.
-
----
-
-I wonder if when you add an item via the selection dropdown, it will feel disorienting, since the height of the cell will change and the dropdown will get bumped down. One possibility is to instantly set scroll with javascript after that happens to preserve the place of the dropdown in its pre-interacted state.
-
----
+#### <span class="date">9/7/2025</span>
 
 Some steps left to finish hooking up selection fields with project databases:
-- [ ] create the ability in goby-database to remove relations (you can only _add_ them right now)
+- [x] create the ability in goby-database to remove relations (you can only _add_ them right now)
 - [ ] get the “new item” buttons working
-- [ ] propagating changes to all the other relations for which they are relevant (as discussed above)
+- [x] propagating changes to all the other relations for which they are relevant (as discussed in 9/1 entry)
 
 Future tasks:
 
@@ -33,6 +25,15 @@ Future tasks:
     - [ ] gradient on sticky prop header row?
     - [ ] intuitive tabbing and arrow key navigation
         - tabbing should take you _down_ to the same property in the next item
+
+
+#### <span class="date">9/1/2025</span>
+
+I’m now in the position I was contemplating in my 6/23/2025 entry, deciding how to handle refreshing the interface after saving changes to the database. I do like the rough approach I thought of there, of writing the changes to the database, and then on the front-end, having all the items that need that info simply fetch what changed for them.
+
+---
+
+I wonder if when you add an item via the selection dropdown, it will feel disorienting, since the height of the cell will change and the dropdown will get bumped down. One possibility is to instantly set scroll with javascript after that happens to preserve the place of the dropdown in its pre-interacted state.
 
 #### <span class="date">8/31/2025</span>
 

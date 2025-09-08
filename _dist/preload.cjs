@@ -17,9 +17,6 @@ const electronAPI = {
     get_workspace: async () => {
         return ipcRenderer.invoke('get_workspace');
     },
-    get_relation_options: async (property) => {
-        return ipcRenderer.invoke('get_relation_options', property);
-    },
     retrieve_class_items: async (cls) => {
         return ipcRenderer.invoke('retrieve_class_items', cls);
     },

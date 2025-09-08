@@ -86,6 +86,9 @@
         width:fit-content;
         min-width:fit-content;
         max-width:fit-content;
+
+        /* temp */
+        margin-bottom:100px;
     }
 
     .class-meta{
