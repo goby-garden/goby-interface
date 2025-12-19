@@ -23,11 +23,24 @@ export const mission_control={
 
         // NOTE: this should cache more effectively in the future,
         // and to that end be moved to the frontend so that it can save the items for each class
-        for (const { class_id } of property.relation_targets ?? []) {
+        for (const { class_id,prop_id } of property.relation_targets ?? []) {
+
+            const conditions=[];
+
+            if(prop_id){
+                // if this relation is two-sided,
+                // filter results by options which can accept more relations for their property
+                conditions.push({
+                    name:"under_property_max" as "under_property_max",
+                    property_id:prop_id
+                })
+            }
+
             const retrieved_item_data = await instance.electron.retrieve_class_items({
                 class_id,
                 pagination: {
-                    property_range: 'slim'
+                    property_range: 'slim',
+                    conditions
                 }
             })
 

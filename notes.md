@@ -1,3 +1,26 @@
+#### <span class="date">12/18/2025</span>
+
+I’m returning after some busy months to where I left off — no work for the next week and a half, so I’m going to see where I can get with this before the end of the year. Just now I implemented the `under_property_max` condition that I set up in goby-database on 9/20, thus completing the first bullet from my 9/7 “future tasks” checklist.
+
+Now, I am as usual returning to this with a fresh eye and feeling dissatisfied with the current interface design — specifically, the design of the table rows and cells. I can’t put my finger on it exactly, but here are a few things that are bugging me:
+
+- everything feels a little too spaced out, to the point of being unwieldy. Populating my example table some more may help a little with this, as well as adding the comma-separated display option for selection fields
+- I like the general idea of the selection options overlay as a bubble floating by the search field, but I think there needs to be some more satisfying animation when it first appears and as it responds to inputs, and the color styles feel a little bland and flat. These sorts of modals are where I want the interface to feel the most tactile.
+
+The question is whether to continue development in my current lane (moving on to single selects, creating new items from the select menu, and other things listed in the last entry), or go back to design sketching and do another pass at look & feel. Given that I need to do some degree of sketching for single selects anyway, it seems the most efficient to do the latter; that way development will also be more fun when I return to it, because (theoretically) I’ll be more excited about bringing the sketch to life. The cost is obviously that it will slow down progress on the functioning interface, but cultivating a sense of excitement and joy in this project is more important to me than that.
+
+Before I boot up Figma, let me think a little bit about how to proceed here:
+
+- Probably makes sense to browse some references
+- Things to explore:
+    - adding some light texture to the area around the tables
+    - making the tables more compact, maybe testing a per-table max width and overflow
+    - (dare I suggest it) other type options? maybe actually utilizing the secondary typeface (fragment)?
+    - what is the color and texture of overlays/modals? how do I make them contrast with the base content layer and feel more substantial, without feeling completely alien from it (e.g. the selection options overlay need to display options in roughly the same way as they appear in the table cell itself, but the overlay itself needs to feel elevated from the surface it’s on)?
+
+
+
+
 #### <span class="date">9/7/2025</span>
 
 Some steps left to finish hooking up selection fields with project databases:
@@ -8,7 +31,7 @@ Some steps left to finish hooking up selection fields with project databases:
 Future tasks:
 
 - more to do on selection fields:
-    - [ ] in the list of relation options, I need to filter out options in two-sided relationships where the corresponding property in the item has already hit its max values.
+    - [x] in the list of relation options, I need to filter out options in two-sided relationships where the corresponding property in the item has already hit its max values.
         - I realize this may read as gibberish — here is an example: A child can have up to two parents. Let’s say in a project representing family trees, I’ve already set Toby’s parents to be Muffy and Gerald. So in the “children” property, Toby should no longer show up as an option
     - [ ] design and implement different rendering for single-select (max_values=1)
         - I’m thinking that if there’s a selected item, it will fade to a low opacity, with the search input overlayed directly on top of it (made clear by the text cursor flashing at the beginning of the field)
