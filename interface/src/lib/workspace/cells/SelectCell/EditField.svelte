@@ -149,6 +149,9 @@
 
     .select-edit-field{
         position:relative;
+        max-width:calc(100% - 9px);
+        --field-offset:8px;
+        margin-left:calc(-1 * var(--field-offset));
     }
     li:not(.unselected){
         pointer-events:none;
@@ -164,19 +167,20 @@
 
     .option-overlay{
         display:none;
-        min-width:fit-content;
-        width:calc(100% + 20px);
-        border:1px var(--col-border) solid;
-        border-radius:3px;
+        /* min-width:fit-content; */
+        width:100%;
+        /* border:1px var(--col-border) solid; */
+        /* border-radius:3px; */
         position:absolute;
         bottom:-4px;
-        left:-10px;
+        left:0px;
         transform:translateY(100%);
-        background-color:var(--col-light-bg);
+        background-color:#F5F5F5;
         z-index:10;
-        padding:10px;
+        padding:6px 0px;
         box-sizing:border-box;
-        box-shadow: 0px 3px 5px 5px #FFFFFF;
+        /* box-shadow: 0px 3px 5px 5px #FFFFFF; */
+        box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.15);
         max-height:200px;
         overflow:auto;
     }
@@ -197,10 +201,21 @@
 
     li{
         white-space:nowrap;
+        width:100%;
+        min-width:0;
+        overflow-y:auto;
+        padding-inline:10px;
+        box-sizing:border-box;
+        scrollbar-width:none;
+    }
+
+    li::-webkit-scrollbar{
+        height:0px;
     }
 
     li :global(button){
-        width:100%;
+        min-width:calc(100% - 3px);
+        /* --item-highlight-right-padding:0px; */
     }
 
     
@@ -213,11 +228,12 @@
         font-family:inherit;
         padding-block:3px 1px;
         /* NOTE: make this variable-based */
-        background-color:var(--col-light-bg);
+        background-color:#F5F5F5;
         /* border-bottom:1px solid var(--col-border); */
         box-sizing:border-box;
-        cursor:text;
+        cursor:pointer;
         width:100%;
+        padding-left:calc(var(--field-offset) + 9px);
     }
 
     .select-edit-field.focused input{

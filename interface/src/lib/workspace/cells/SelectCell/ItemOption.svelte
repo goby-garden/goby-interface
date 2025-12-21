@@ -17,7 +17,10 @@
 </script>
 
 <button onclick={(e)=>click_handler({e,item})}>
-    <span class="option-inner"><span class="item-icon"></span>{label}</span>
+    <span class="option-inner">
+        <span class="item-icon"></span>
+        <span class="item-label">{label}</span>
+    </span>
    
 </button>
 
@@ -28,11 +31,17 @@
         /* transition:background-color 0.3s; */
         position:relative;
         text-align:left;
+        --item-highlight-left-padding:6px;
+        --item-highlight-right-padding:6px;
     }
 
     .option-inner{
         position:relative;
         z-index:3;
+        display:inline-flex;
+        flex-flow:row nowrap;
+        align-items:flex-start;
+        gap:5px;
     }
     
 
@@ -40,17 +49,14 @@
         z-index:1;
         content:'';
         position:absolute;
-        width:100%;
-        height:calc(100% + 6px);
-        left:0;
-    }
-    button::after{
-        top:-3px;
+        width:calc(100% + (var(--item-highlight-left-padding) + var(--item-highlight-right-padding)));
+        height:100%;
+        left:calc(var(--item-highlight-left-padding) * -1);
     }
 
-    button:hover{
-        background-color:var(--col-highlight,var(--col-light-bg));
-        /* background-color:#f3f3f3; */
+    button:hover::after{
+        background-color:var(--col-highlight,#f5f5f5);
+        /* background-color:#F5F5F5; */
     }
 
     button .item-icon{
@@ -58,9 +64,13 @@
         height:4px;
         width:4px;
         vertical-align:middle;
-        margin-right:4px;
+        margin-top: 7px;
         background-color:rgba(255, 0, 0, 0.484);
         display:inline-block;
         transform:translateY(-1px);
+    }
+
+    button .item-label{
+        flex: 1;
     }
 </style>

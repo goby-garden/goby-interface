@@ -153,6 +153,7 @@
     .select-field {
         /* min-height:100%; */
         width: 100%;
+        /* width:150px; */
         position: relative;
     }
 
