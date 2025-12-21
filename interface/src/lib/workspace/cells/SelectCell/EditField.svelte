@@ -100,25 +100,27 @@
         bind:value={option_search_str}
         onfocus={()=>focused=true}
      />
-     <div class="option-overlay">
-        {#if create_new_buttons.length>0 && option_search_str.length>0}
-            <div class="create-new">
-                {#each create_new_buttons as cls}
-                    <button>{cls.name}</button>
+     {#if focused && display_options.length>0}
+        <div class="option-overlay">
+            <!-- {#if create_new_buttons.length>0 && option_search_str.length>0}
+                <div class="create-new">
+                    {#each create_new_buttons as cls}
+                        <button>{cls.name}</button>
+                    {/each}
+                </div>
+                
+            {/if} -->
+            {#if display_options.length>0}
+            <ul>
+                {#each display_options as item}
+                    <li class:unselected={not_selected(item)}>
+                        <ItemOption {item} {target_labels} click_handler={option_click_handler} />
+                    </li>
                 {/each}
-            </div>
-            
-        {/if}
-        {#if display_options.length>0}
-        <ul>
-            {#each display_options as item}
-                <li class:unselected={not_selected(item)}>
-                    <ItemOption {item} {target_labels} click_handler={option_click_handler} />
-                </li>
-            {/each}
-        </ul>
-        {/if}
-     </div>
+            </ul>
+            {/if}
+        </div>
+     {/if}
      <!-- {#if display_options.length>0}
      {/if} -->
 </div>
@@ -150,7 +152,6 @@
     .select-edit-field{
         position:relative;
         max-width:calc(100% - 9px);
-        --field-offset:8px;
         margin-left:calc(-1 * var(--field-offset));
     }
     li:not(.unselected){

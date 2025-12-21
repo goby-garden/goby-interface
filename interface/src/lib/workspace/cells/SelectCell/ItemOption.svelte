@@ -52,6 +52,7 @@
         width:calc(100% + (var(--item-highlight-left-padding) + var(--item-highlight-right-padding)));
         height:100%;
         left:calc(var(--item-highlight-left-padding) * -1);
+        /* transition:background-color 0.2s; */
     }
 
     button:hover::after{

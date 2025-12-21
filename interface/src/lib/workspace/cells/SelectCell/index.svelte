@@ -126,7 +126,10 @@
 <CellWrapper fill_height>
     <div class="select-field" class:focused bind:this={select_field}>
         <ul class="select-value display" class:multiple>
-            {#each value as item}
+            {#each value as item,i (item.system_id)}
+                <!-- <div class="spacer">
+                    <div class="insert-bar"></div>
+                </div> -->
                 <li class="selection">
                     <ItemOption
                         {item}
@@ -155,7 +158,14 @@
         width: 100%;
         /* width:150px; */
         position: relative;
+        pointer-events:none;
+        --field-offset:8px;
+        cursor:pointer;
     }
+
+     /* .select-field:hover :global(.edit-field-wrapper){
+        opacity:1;
+     } */
 
     ul {
         display: flex;
@@ -171,12 +181,71 @@
         /* transition:background-color 0.3s; */
     }
 
-    /* .select-field:has(.focus-edit-field:hover) ul, */
-    /* .select-field:has(.edit-field-wrapper:hover) ul, */
-    .select-field.focused ul {
-        /* transition-delay:0.1s; */
-        /* background-color:var(--col-light-bg); */
+    li{
+        position:relative;
+        z-index:10;
     }
+
+    .spacer{
+        z-index:5;
+        pointer-events:all;
+        position:relative;
+        /* cursor:pointer; */
+        height:5px;
+        width:100%;
+        margin-left:calc(-1 * var(--field-offset));
+    }
+
+    
+    .spacer::before{
+        content:'';
+        height:27px;
+        transform:translateY(-50%);
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+    }
+
+    .spacer .insert-bar::before{
+        /* background-color:gray; */
+        border-inline:4px solid white;
+        width:4px;
+        height:4px;
+        display:block;
+        content:'';
+        left:4px;
+        position:relative;
+    }
+
+
+    .spacer .insert-bar{
+        top:50%;
+        position:absolute;
+        left:0;
+        width:100%;
+        height:4px;
+        transform:translateY(-50%);
+        opacity:0;
+        /* background-color:#F5F5F5; */
+        /* transition:background-color 0.1s; */
+    }
+
+    .spacer:hover .insert-bar{
+        background-color:#F5F5F5;
+       opacity:1;
+    }
+
+    .spacer:first-of-type{
+        height:0px;
+        & .insert-bar{
+            top:0px;
+            /* transform:translateY(-50%);
+            top:-2px; */
+        }
+    }
+
+
 
     .focus-edit-field {
         z-index: 1;
@@ -192,7 +261,8 @@
         z-index: 3;
         margin-top: 2px;
         opacity: 0;
-        /* transition:opacity 0.3s; */
+        pointer-events:all;
+        /* transition:opacity 0.2s; */
     }
 
     .focused .edit-field-wrapper {
