@@ -1,3 +1,13 @@
+#### <span class="date">12/21/2025</span>
+
+Next steps:
+- [ ] entry/exit animation for options overlay
+- [ ] single select styles
+
+
+
+
+
 #### <span class="date">12/18/2025</span>
 
 I’m returning after some busy months to where I left off — no work for the next week and a half, so I’m going to see where I can get with this before the end of the year. Just now I implemented the `under_property_max` condition that I set up in goby-database on 9/20, thus completing the first bullet from my 9/7 “future tasks” checklist.

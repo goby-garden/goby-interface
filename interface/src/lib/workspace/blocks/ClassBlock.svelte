@@ -104,7 +104,7 @@
         display:grid;
         grid-template-columns:repeat(var(--n-properties),max-content);
         grid-template-rows:repeat(auto,40px);
-        gap:0px 30px;
+        gap:0px 28px;
         --default-col-width:180px;
     }
 
@@ -149,7 +149,7 @@
         top:30px;
         /* background-color:white; */
         background:linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 20%);
-        z-index:5;
+        z-index:6;
         padding-top:15px;
         /* border-bottom:1px solid black; */
     }

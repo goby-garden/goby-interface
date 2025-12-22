@@ -10,13 +10,17 @@
         target_classes,
         property,
         selected = [],
-        edit_selection
+        edit_selection,
+        hover = false,
+        option_search_str = $bindable('')
     }:{
         focused:boolean,
+        hover:boolean,
         target_labels:LabelProperties,
         target_classes:ClassData[],
         property:Property,
         selected:RelationItem[],
+        option_search_str:string,
         edit_selection:(obj:{
             action:'add' | 'remove'
             item:RelationItem
@@ -24,7 +28,7 @@
     } = $props();
 
     let option_input:HTMLElement | undefined=$state();
-    let option_search_str:string=$state('');
+    // let option_search_str:string=$state('');
 
     let prev_focus_state=$state(false);
 
@@ -92,7 +96,7 @@
 
 </script>
 
-<div class='select-edit-field' class:focused>
+<div class='select-edit-field' class:focused class:hover>
     <input 
         class="search-add-options"
         type="text"
@@ -151,9 +155,27 @@
 
     .select-edit-field{
         position:relative;
-        max-width:calc(100% - 9px);
+        width:calc(100% + var(--field-offset) * 2);
         margin-left:calc(-1 * var(--field-offset));
     }
+
+    .select-edit-field::before{
+        position:absolute;
+        top:8.5px;
+        left:var(--field-offset);
+        background-color:var(--col-border);
+        content:'';
+        height:4px;
+        width:4px;
+        opacity:0;
+    }
+
+    .select-edit-field.hover::before,
+    .select-edit-field:hover::before,
+    .select-edit-field.focused::before{
+        opacity:1;
+    }
+
     li:not(.unselected){
         pointer-events:none;
         order:2;
@@ -168,10 +190,7 @@
 
     .option-overlay{
         display:none;
-        /* min-width:fit-content; */
         width:100%;
-        /* border:1px var(--col-border) solid; */
-        /* border-radius:3px; */
         position:absolute;
         bottom:-4px;
         left:0px;
@@ -228,14 +247,23 @@
         font-size:inherit;
         font-family:inherit;
         padding-block:3px 1px;
-        /* NOTE: make this variable-based */
-        background-color:#F5F5F5;
+        background-color: transparent;
+
+        
         /* border-bottom:1px solid var(--col-border); */
         box-sizing:border-box;
         cursor:pointer;
+        /* cursor:default; */
         width:100%;
         padding-left:calc(var(--field-offset) + 9px);
     }
+
+    /* .select-edit-field:hover input, */
+    /* .focused input{
+        background-color:#F5F5F5;
+    } */
+
+    /* background-color:#F5F5F5; */
 
     .select-edit-field.focused input{
         cursor:text;

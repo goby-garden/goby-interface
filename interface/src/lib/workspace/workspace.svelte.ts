@@ -10,6 +10,13 @@ export let context: {
     workspace: { blocks: [], items: [], classes: [] }
 });
 
+
+export const client:{
+    open_modals:string[]
+} = $state({
+    open_modals:[]
+})
+
 type Pr<T> = Promise< T | undefined>
 
 export const mission_control={

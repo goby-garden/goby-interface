@@ -4,10 +4,12 @@
     let {
         item,
         target_labels,
+        single = false,
         click_handler = ()=>{}
     }:{
         item:RelationItem,
         target_labels:LabelProperties,
+        single:boolean,
         click_handler?:(info:{e:MouseEvent,item:RelationItem})=>void
     } = $props();
 
@@ -16,7 +18,7 @@
 
 </script>
 
-<button onclick={(e)=>click_handler({e,item})}>
+<button onclick={(e)=>click_handler({e,item})} class:single>
     <span class="option-inner">
         <span class="item-icon"></span>
         <span class="item-label">{label}</span>
