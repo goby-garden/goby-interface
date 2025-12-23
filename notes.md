@@ -1,8 +1,14 @@
 #### <span class="date">12/21/2025</span>
 
 Next steps:
+- [x] single select styles
+- [ ] get “create new” button functionality working, which entails:
+    - calling `add_row` to create an item with the label prop filled out
+    - getting the returned ID and using it to call `edit_relations`
+    - [x] creating temporary client-side versions of the relation when editing, which save to the db when you unfocus the selection _or_ when a timer runs out
+        - [x] modify ItemOption to accept a raw label string and class id as an alternative to an item object
 - [ ] entry/exit animation for options overlay
-- [ ] single select styles
+
 
 
 

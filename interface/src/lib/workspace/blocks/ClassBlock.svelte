@@ -105,7 +105,7 @@
         grid-template-columns:repeat(var(--n-properties),max-content);
         grid-template-rows:repeat(auto,40px);
         gap:0px 28px;
-        --default-col-width:180px;
+        --default-col-width:40px;
     }
 
     .class-table-row{

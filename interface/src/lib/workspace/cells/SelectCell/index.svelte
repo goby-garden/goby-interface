@@ -5,11 +5,12 @@
         mission_control,
         client
     } from "$lib/workspace/workspace.svelte.js";
-    import type { ClassData, Property } from "goby-database/dist/types";
+    import type { ClassData, Property, RelationTarget } from "goby-database/dist/types";
     import CellWrapper from "../CellWrapper.svelte";
     import ItemOption from "./ItemOption.svelte";
     import EditField from "./EditField.svelte";
     import { untrack } from "svelte";
+    import { defined } from "goby-database/dist/utils";
 
     let {
         value = $bindable([]),
@@ -27,13 +28,24 @@
 
     let single = $derived(max_values == 1);
 
-    let target_classes = $derived(
-        context.workspace.classes.filter((c) =>
-            property.relation_targets?.some((t) => t.class_id == c.id),
-        ),
-    );
+    let targets_with_class_data=$derived.by(()=>{
+        const combined=(property.relation_targets || []).map((target)=>{
+            const class_data=context.workspace.classes.find((t) => t.id == target.class_id);
+            return {
+                class_data,
+                ...target
+            }
+        });
+
+        const validated=combined.filter((target)=>defined(target.class_data)) as Array<typeof combined[number] & {class_data:ClassData}>;
+
+        return validated;
+    })
+
+    // .filter((target)=>defined(target.class_data))
+
     let target_labels = $derived(
-        target_classes.reduce(
+        targets_with_class_data.reduce(
             (
                 acc: {
                     [key: string]: string | undefined;
@@ -43,11 +55,11 @@
                 // TODO: this could probably be a util in the future
                 // may also need to revisit if support is added for multi-prop labels etc
                 // ADDENDUM: I can also probably make the output part of the store for the class prop in context.workspace instead of passing it down? unsure
-                const label_prop_id = c.metadata.label?.properties[0];
-                const label_prop = c.properties.find(
+                const label_prop_id = c.class_data.metadata.label?.properties[0];
+                const label_prop = c.class_data.properties.find(
                     (p) => p.id == label_prop_id,
                 );
-                acc[c.id] = label_prop?.name;
+                acc[c.class_id] = label_prop?.name;
                 return acc;
             },
             {},
@@ -85,7 +97,7 @@
 
         let edits=[edit];
 
-        if(edit.action=="add" && single){
+        if(edit.action=="add" && single && value?.length>0){
             // if single select, remove currently selected item
             edits.push({
                 action:'remove',
@@ -165,6 +177,53 @@
         }
         
     }
+
+    type NewItem={
+        class_id:number;
+        prop_id?:number;
+        label:string;
+    };
+
+    let new_item_queue:NewItem[]=$state([]);
+
+    function handle_create_new({class_id,prop_id}:{class_id:number,prop_id?:number | null}){
+        
+        const new_item:NewItem={
+            class_id,
+            label:option_search_str
+        }
+
+        if(defined(prop_id)){
+            new_item.prop_id=prop_id;
+        }
+        
+        new_item_queue.push(new_item);
+
+        requestAnimationFrame(()=>{
+            option_search_str='';
+        })
+        
+    }
+
+    function remove_new_from_queue({label,class_id,prop_id}:{e:MouseEvent,label:string,class_id:number,prop_id?:number}){
+        requestAnimationFrame(()=>{
+            new_item_queue=new_item_queue.filter((item)=>{
+                let is_matching=item.label==label&&
+                                item.class_id==class_id&&
+                                item.prop_id==prop_id;
+                return !is_matching;
+            })
+        })
+    }
+
+    // $effect(()=>{
+    //     if(!focused&&new_item_queue.length>0){
+    //         for(let new_item of new_item_queue){
+
+    //         }
+    //     }
+    // })
+
 </script>
 
 <CellWrapper fill_height>
@@ -191,10 +250,22 @@
                 </div> -->
                 <li class="selection">
                     <ItemOption
+                        registered
                         {item}
                         {single}
                         {target_labels}
                         click_handler={selected_click_handler}
+                    />
+                </li>
+            {/each}
+            {#each new_item_queue as {label,class_id,prop_id},i (`${label}-${class_id}`)}
+                <li class="selection">
+                    <ItemOption
+                        registered={false}
+                        {label}
+                        {class_id}
+                        {prop_id}
+                        click_handler={remove_new_from_queue}
                     />
                 </li>
             {/each}
@@ -206,10 +277,12 @@
                 bind:option_search_str
                 hover={base_hover}
                 {target_labels}
-                {target_classes}
+                targets={targets_with_class_data}
                 {property}
-                selected={value}
+                {single}
+                selected={value || []}
                 {edit_selection}
+                {handle_create_new}
             />
         </div>
     </div>
@@ -226,6 +299,8 @@
         grid-template-areas:'value'
                             'edit';
         gap:2px;
+        
+        --option-gap:8px;
     }
 
     .select-value{
@@ -240,7 +315,7 @@
     .edit-highlight{
         z-index:1;
         margin-left: calc(var(--field-offset) * -1);
-        width: calc(100% + 2* var(--field-offset));
+        width: calc(100% + var(--field-offset));
     }
 
     .focused .edit-highlight{
@@ -263,7 +338,7 @@
     ul {
         display: flex;
         flex-flow: column nowrap;
-        gap: 5px;
+        gap: var(--option-gap);
         line-height: 1.3em;
         position: relative;
         z-index: 3;
@@ -370,25 +445,28 @@
         display:grid;
         grid-template-areas:'edit';
         grid-template-rows: min-content;
-        height: fit-content;
-        min-height: fit-content;
+        /* height: fit-content;
+        min-height: fit-content; */
     }
 
     .select-field.single .select-value{
         /* z-index:5; */
+        /* padding-right:22px; */
     }
 
     .select-field.single.focused .select-value{
         pointer-events:none;
-        opacity:0.5;
+        opacity:0.7;
     }
+    
 
     .select-field.single.focused.searching .select-value{
         opacity:0;
     }
 
-    .select-field.single .edit-field-wrapper{
-        margin-top: 0px;
+    .select-field.single .edit-field-wrapper,
+    .select-field.single .edit-highlight{
+        margin-top: -2.5px;
     }
 
     .select-field.single .select-value{
