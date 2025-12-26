@@ -10,20 +10,7 @@
     } = $props();
 
     let {data} = block;
-
-    // instance
-
-    let relation_property_options:{
-        [key:string]:{
-            item_id:number;
-            class_id:number;
-            name:string;
-        }[]
-    }=$state({});
-
-
-    $inspect('relation_property_options',relation_property_options)
-    
+        
 </script>
 {#if data}
 <div class="class-block">
@@ -49,6 +36,7 @@
                                 <TextCell 
                                     bind:value={item['user_'+property.name]} 
                                     parent= {item_identification}
+                                    {property}
                                     />
                             {/if}
                         {:else if property.type=='relation'}

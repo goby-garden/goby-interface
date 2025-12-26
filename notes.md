@@ -1,17 +1,44 @@
+#### <span class="date">12/24/2025</span>
+
+So I’m mulling over the challenge I identified yesterday of handling surgical refreshes when an item has been newly created, and I don’t necessarily know its sort position. 
+
+It turns out there is a relatively easy way to determine how many rows come before an item (and hence what page it would be on). But if I have to make a request to find this out, then I might as well just fetch the row, which is fairly trivial, and use `system_order` to determine whether or not it needs to be slotted into the existing set of items.
+
+..._Well_, to be fair, this assumes I don’t have any special filters or overriding “order by” rules on my request, which I don’t expect to be a given once I add those features to the UI.
+
+Maybe I’m overthinking this right now, since I don’t even have real pagination set up? I could just set it to retrieve the new item and place it according to `system_order`, and leave a note for myself to revisit that logic once I’m at the stage to consider those sorts of features.
+
+OK so if I do that, I probably do want to record the newly registered items in the return value of my edit_relations function. Maybe I structure the return as an array of objects representing each class, and listing modified classes and items, as well as newly created items.
+
+
+#### <span class="date">12/23/2025</span>
+
+Next steps:
+- [x] figure out why there is a flash between the temporary item disappearing and the registered item appearing when you unfocus the select field
+- [x] set up create item behavior for single selects
+- [x] set up changes to text cells to actually update the database
+- [x] modify mission_control.edit_relations to refresh newly created items in addition to existing ones
+    - [x] may require modifying `edit_relations` in goby-database to return its input including the newly created IDs
+
+To explore:
+- [ ] entry/exit animation for options overlay
+
+
+I’m now realizing `mission_control.edit_relations` will take some more sophisticated refactoring - currently I’m surgically deciding which items need to be reloaded, based on which classes are loaded and the assumption that the displaying items will be paginated. If a new item has been added, I have to either:
+        - come up with a surefire performant way of knowing whether the new item is within the page currently displaying
+        - just reload the entire paginated set of items
+
+
+
 #### <span class="date">12/21/2025</span>
 
 Next steps:
 - [x] single select styles
-- [ ] get “create new” button functionality working, which entails:
+- [x] get “create new” button functionality working, which entails:
     - calling `add_row` to create an item with the label prop filled out
     - getting the returned ID and using it to call `edit_relations`
     - [x] creating temporary client-side versions of the relation when editing, which save to the db when you unfocus the selection _or_ when a timer runs out
         - [x] modify ItemOption to accept a raw label string and class id as an alternative to an item object
-- [ ] entry/exit animation for options overlay
-
-
-
-
 
 
 #### <span class="date">12/18/2025</span>

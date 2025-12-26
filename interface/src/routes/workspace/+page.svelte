@@ -25,11 +25,6 @@
             items:[...context.workspace.items,...(fetched_workspace?.items || [])]
         }
     })
-    
-    $inspect('blocks_iterable',blocks_iterable)
-    $inspect('classes',classes)
-
-    
 
 </script>
 

@@ -23,5 +23,8 @@ const electronAPI = {
     edit_relations: async (relations) => {
         return ipcRenderer.invoke('edit_relations', relations);
     },
+    edit_item_data: async (...params) => {
+        return ipcRenderer.invoke('edit_item_data', params);
+    }
 };
 contextBridge.exposeInMainWorld('electronAPI', electronAPI);

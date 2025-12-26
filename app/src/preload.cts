@@ -23,9 +23,12 @@ const electronAPI={
     retrieve_class_items:async (cls:Parameters<Project["retrieve_class_items"]>[0]):Promise<ReturnType<Project["retrieve_class_items"]>> =>{
       return ipcRenderer.invoke('retrieve_class_items',cls);
     },
-    edit_relations:async (relations:Parameters<Project["action_edit_relations"]>[0])=>{
+    edit_relations:async (relations:Parameters<Project["action_edit_relations"]>[0]):Promise<ReturnType<Project["action_edit_relations"]>>=>{
       return ipcRenderer.invoke('edit_relations',relations);
     },
+    edit_item_data:async (...params:Parameters<Project["action_edit_item_data"]>):Promise<ReturnType<Project["action_edit_item_data"]>>=>{
+        return ipcRenderer.invoke('edit_item_data',params);
+    }
   };
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI)

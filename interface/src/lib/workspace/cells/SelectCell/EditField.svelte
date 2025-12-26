@@ -9,6 +9,7 @@
 
     let {
         focused=$bindable(false),
+        queue_option_update=$bindable(),
         target_labels,
         targets,
         property,
@@ -31,7 +32,8 @@
             action:'add' | 'remove'
             item:RelationItem
         })=>void,
-        handle_create_new:(obj:{class_id:number,prop_id?:number | null})=>void
+        handle_create_new:(obj:{class_id:number,prop_id?:number | null})=>void,
+        queue_option_update:boolean
     } = $props();
 
     let option_input:HTMLElement | undefined=$state();
@@ -40,6 +42,7 @@
     let prev_focus_state=$state(false);
 
     let filtered_options:RelationItem[]=$state([]);
+    
 
     $effect(()=>{
         if(focused!==prev_focus_state){
@@ -59,10 +62,11 @@
         }
         // this will need to be cached more effectively in the future.
         // see get_relation_options mission control for more info
-        if(filtered_options.length==0){
+        if(filtered_options.length==0 || queue_option_update){
             try{
                 const fetched=await mission_control.get_relation_options($state.snapshot(property));
                 filtered_options=fetched || [];
+                queue_option_update=false;
             }catch(e){
                 console.log(e);
             }
@@ -97,8 +101,11 @@
     }))
 
     function option_click_handler({item,action = "add"}:{item:RelationItem, action?:'add' | 'remove'}){
-        option_search_str='';
         edit_selection({action,item});
+        requestAnimationFrame(()=>{
+            option_search_str='';
+            option_input?.focus();
+        })
     }
 
     

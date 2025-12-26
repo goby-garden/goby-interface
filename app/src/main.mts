@@ -106,8 +106,15 @@ ipcMain.handle('get_workspace',async function(event){
 })
 
 ipcMain.handle('edit_relations',async function(event,relations:Parameters<Project["action_edit_relations"]>[0]){
-  project.action_edit_relations(relations);
-  return true;
+  const edited=project.action_edit_relations(relations);
+  return edited;
+})
+
+
+ipcMain.handle('edit_item_data',async function(event,params:Parameters<Project["action_edit_item_data"]>){
+  project.action_edit_item_data(...params);
+  // const edited=project.action_edit_relations(relations);
+  return;
 })
 
 ipcMain.handle('retrieve_class_items',async function(event,cls:Parameters<Project["retrieve_class_items"]>[0]){

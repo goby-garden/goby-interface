@@ -1,17 +1,25 @@
 <script lang="ts">
-    import type { RelationItem } from "$lib/types";
+    // type imports
+    import type { RelationItem,NewItem,SelectionEdit } from "$lib/types";
+    import type { ClassData, Property } from "goby-database/dist/types";
+    
+    // global store imports
     import {
         context,
         mission_control,
         client
     } from "$lib/workspace/workspace.svelte.js";
-    import type { ClassData, Property, RelationTarget } from "goby-database/dist/types";
-    import CellWrapper from "../CellWrapper.svelte";
-    import ItemOption from "./ItemOption.svelte";
-    import EditField from "./EditField.svelte";
+    
+    // utils
     import { untrack } from "svelte";
     import { defined } from "goby-database/dist/utils";
 
+    // component imports
+    import CellWrapper from "../CellWrapper.svelte";
+    import ItemOption from "./ItemOption.svelte";
+    import EditField from "./EditField.svelte";
+
+    // component params
     let {
         value = $bindable([]),
         max_values,
@@ -24,10 +32,36 @@
         parent: { block_id: number; class_id: number; item_id: number };
     } = $props();
 
+    // unique ID for component instance
     let svelte_id = $props.id();
 
+    // reactive variables/bindings --------------------------
+    
+    // option search input
+    let select_field: HTMLElement | undefined = $state();
+
+    // search input value
+    let option_search_str=$state('');
+
+    // is selection dropdown focused (does not map directly to input)
+    let focused = $state(false);
+    
+    // is the cell (but not any of the selected options) being hovered
+    let base_hover=$state(false);
+
+    // list of newly created items which are not yet saved to database
+    let new_item_queue:NewItem[]=$state([]);
+
+    // when new items are created, the list of selection options needs to be refreshed
+    let queue_option_update:boolean=$state(false);
+
+    
+    // derived variables --------------------------
+    
+    // is it a single-select?
     let single = $derived(max_values == 1);
 
+    // fetches class data for each target and combines them into single objects for easy access
     let targets_with_class_data=$derived.by(()=>{
         const combined=(property.relation_targets || []).map((target)=>{
             const class_data=context.workspace.classes.find((t) => t.id == target.class_id);
@@ -42,8 +76,7 @@
         return validated;
     })
 
-    // .filter((target)=>defined(target.class_data))
-
+    // compiles the label properties for each target class into a keyed object for easy access
     let target_labels = $derived(
         targets_with_class_data.reduce(
             (
@@ -66,16 +99,15 @@
         ),
     );
 
-    let select_field: HTMLElement | undefined = $state();
+    
 
-    function handle_click(e: MouseEvent) {
-        if (select_field && e.target instanceof Node) {
-            focused = select_field.contains(e.target);
-        }
-    }
 
+    // effects --------------------------------
+    
+
+    // when focused, add click listener to handle clicking out to unfocus
     $effect(() => {
-        // NOTE: generalize this!
+        // NOTE: generalize this into an action or wrapper component, probably?
         if (focused) {
             window.addEventListener("click", handle_click);
             untrack(()=>{
@@ -84,61 +116,111 @@
         } else {
             window.removeEventListener("click", handle_click);
 
+            if(new_item_queue.length>0){
+                // when focus ends, create any new items in queue
+                edit_selection_batch(
+                    $state.snapshot(new_item_queue).map((item)=>({
+                        action:'add',
+                        item
+                    })),
+                    ()=>{
+                        new_item_queue=[];
+                    }
+                );
+
+                // set options to be refreshed the next time this dropdown is opened
+                queue_option_update=true;
+            }
+
             untrack(()=>{
                 client.open_modals=client.open_modals.filter((a)=>a!==svelte_id);
             })
         }
-    });
+    });    
 
-    function edit_selection(edit: {
-        action: "add" | "remove";
-        item: RelationItem;
-    }) {
+    // utils and event handlers ----------------------------------
 
-        let edits=[edit];
-
-        if(edit.action=="add" && single && value?.length>0){
-            // if single select, remove currently selected item
-            edits.push({
-                action:'remove',
-                item:value[0]
-            })
+    /**
+     * unfocus if click is outside bounds of cell
+     * @param e
+     */
+    function handle_click(e: MouseEvent) {
+        if (select_field && e.target instanceof Node) {
+            focused = select_field.contains(e.target);
         }
+    }
+
+
+    /**
+     * add or remove a single item from the selection, and save to database
+     * @param edit
+     */
+    function edit_selection(edit: {action:'add' | 'remove', item:RelationItem}) {
+
+        let edits:SelectionEdit[]=[edit];
+
+        if(edit.action=="add"){
+            // if single select, remove currently selected item
+            single_select_clear();
+        }
+
+        edit_selection_batch(edits);
+    }
+
+    /**
+     * make a batch of changes to the selection, and save to database
+     * @param edits
+     * @param finished_callback - fires when edits have been finished asynchronously, to synchronize other changes to the DOM
+     */
+    function edit_selection_batch(edits:SelectionEdit[],finished_callback?:()=>void){
         
-        window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(async () => {
+            for(let {action,item} of edits){
+                // make changes client-side if items already exist
+                if("system_id" in item){
+                    if (action == "add") {
+                        value = [...(value || []), item];
+                    } else if (action == "remove") {
+                        value = (value || []).filter(
+                            (sel) =>
+                                !(
+                                    sel.class_id == item.class_id &&
+                                    sel.system_id == item.system_id
+                                ),
+                        );
+                    }
+                }
+            }
+
             const mission_control_queue:Parameters<typeof mission_control["edit_relations"]>[0]=[];
 
+            const input_1={
+                class_id: parent.class_id,
+                item_id: parent.item_id,
+                prop_id: property.id,
+            }
+                
             for(let { action,item,} of edits){
-                // TODO: revise in future if I allow targets from the same class
+
+                // temporary; this is here because the options array does not have prop IDs
+                // because I have not yet added handling for when a property targets two props from the same class
                 const corresponding_target = property.relation_targets?.find(
                     (target) => target.class_id == item.class_id,
                 );
-                if (action == "add") {
-                    value = [...(value || []), item];
-                } else if (action == "remove") {
-                    value = (value || []).filter(
-                        (sel) =>
-                            !(
-                                sel.class_id == item.class_id &&
-                                sel.system_id == item.system_id
-                            ),
-                    );
-                }
+
+
+                let input_2="system_id" in item?{
+                    class_id:item.class_id,
+                    prop_id:item.prop_id ?? corresponding_target?.prop_id ?? undefined,
+                    item_id:item.system_id
+                }:item;
 
                 mission_control_queue.push(
                     {
                         change: action,
                         sides: [
-                            {
-                                class_id: parent.class_id,
-                                item_id: parent.item_id,
-                                prop_id: property.id,
-                            },
-                            {
-                                class_id: item.class_id,
-                                item_id: item.system_id,
-                                prop_id: corresponding_target?.prop_id || undefined,
-                            },
+                            input_1,
+                            input_2
                         ],
                     }
                 )
@@ -146,46 +228,33 @@
                 
             }
 
-            mission_control.edit_relations(mission_control_queue);
-
-
-
-
+            await mission_control.edit_relations(mission_control_queue);
+            if(finished_callback) finished_callback();
 
         });
     }
 
+    /**
+     * click handler to remove item from selection
+     */
     function selected_click_handler({ item }: { item: RelationItem }) {
         if (focused) {
             edit_selection({ action: "remove", item });
         }
     }
 
-    let focused = $state(false);
     
-    let base_hover=$state(false);
-
-    let option_search_str=$state('');
-    
-    let base_hover_active=$derived(base_hover&&client.open_modals.length==0);
-
+    // should probably consolidate this in the future with my other click-out handler
     function handle_passive_click(){
-        if(!focused){
-            // if(client.open_modals.length==0) focused=true;
-        }else{
+        if(focused){
             focused=false;
         }
-        
     }
 
-    type NewItem={
-        class_id:number;
-        prop_id?:number;
-        label:string;
-    };
-
-    let new_item_queue:NewItem[]=$state([]);
-
+    /**
+     * Event handler for when you click to create a new item with a specified class
+     * @param param0
+     */
     function handle_create_new({class_id,prop_id}:{class_id:number,prop_id?:number | null}){
         
         const new_item:NewItem={
@@ -196,6 +265,11 @@
         if(defined(prop_id)){
             new_item.prop_id=prop_id;
         }
+
+        // clear other items if single select
+        single_select_clear();
+
+        // new_item_queue
         
         new_item_queue.push(new_item);
 
@@ -205,6 +279,26 @@
         
     }
 
+
+    function single_select_clear(){
+        if(single){
+            // remove any registered item
+            if(value?.length>0){
+                edit_selection_batch([{
+                    action:'remove',
+                    item:value[0]
+                }]);
+            }
+    
+            //remove any new item 
+            new_item_queue=[];
+        }
+    }
+
+    /**
+     * Click handler to remove a new item that has not been registered yet
+     * @param param0
+     */
     function remove_new_from_queue({label,class_id,prop_id}:{e:MouseEvent,label:string,class_id:number,prop_id?:number}){
         requestAnimationFrame(()=>{
             new_item_queue=new_item_queue.filter((item)=>{
@@ -215,14 +309,6 @@
             })
         })
     }
-
-    // $effect(()=>{
-    //     if(!focused&&new_item_queue.length>0){
-    //         for(let new_item of new_item_queue){
-
-    //         }
-    //     }
-    // })
 
 </script>
 
@@ -262,6 +348,7 @@
                 <li class="selection">
                     <ItemOption
                         registered={false}
+                        {single}
                         {label}
                         {class_id}
                         {prop_id}
@@ -283,6 +370,7 @@
                 selected={value || []}
                 {edit_selection}
                 {handle_create_new}
+                bind:queue_option_update
             />
         </div>
     </div>
