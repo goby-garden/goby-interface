@@ -4,7 +4,7 @@ OK, so I have now completed everything from my 12/23 checklist. On a basic level
 
 Refinements and features to follow:
 
-(==&ZeroWidthSpace;== = imminent priorities)
+( ==&nbsp;&nbsp;&nbsp;== = imminent priorities)
 
 - class table block
     - [ ] create new class block from scratch
@@ -50,7 +50,7 @@ Refinements and features to follow:
 Extremely distant horizon:
 - item grid version of class block, with modular display options for properties
 - “hopper” to add new items frictionlessly
-- m o b i l e
+- m o b i l e  a p p ?
 - some mechanism for enforcing hierarchy/nesting (to enable something like file system organization or nested tags)
 
 
