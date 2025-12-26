@@ -1,3 +1,60 @@
+#### <span class="date">12/25/2025</span>
+
+OK, so I have now completed everything from my 12/23 checklist. On a basic level, single, multi selects, and text cells are functional and changes to any cell propagate across the database. 
+
+Refinements and features to follow:
+
+(==&ZeroWidthSpace;== = imminent priorities)
+
+- class table block
+    - [ ] create new class block from scratch
+    - [ ] ==class color palette system==
+    - [ ] ergonomic keyboard navigation (arrow, tab, shift+enter) between rows
+    - [ ] add new row/item functionality
+    - [ ] on left and right edges, have little box show up on hover that allows selection of whole item
+        - [ ] drag this to reorder rows/items
+    - [ ] select a property from its column header
+        - settings context menu
+        - use to sort/filter items
+    - [ ] pagination
+    - [ ] drag property header to reorder columns/props
+    - [ ] ==create new property interface==
+    - select cells:
+        - [ ] comma-separated display option for selections
+        - [ ] entry/exit animation for options overlay, to make the latency less of an issue
+        - [ ] drag to rearrange selected order
+        - [ ] click to select an item
+            - [ ] bring up a context menu with options to:
+                - remove from selection
+                - pull up a full representation
+                - if class is open, scroll the item into view within its table
+            - [ ] allow copy/paste and shift-clicking to select multiple
+        - control/alt + click on item to remove it from selection without opening up dropdown
+        - [ ] make click-out handlers more efficient (I have 2 that could be consolidated)
+        - [ ] timeout to automatically add newly created property, even if you don’t exit the dropdown
+        - [ ] `ESC` key to collapse dropdown/exit search input
+        - [ ] make the styling less cobbled-together and less dependent on specific font sizes, line heights, and dimensions
+    - text cells:
+        - markdown rendering support
+    - boolean cells
+    - asset/resource/file (name tbd) cells
+- client-side data management and propagation
+    - [ ] pagination, sorting, filtering and all the accompanying data refresh complexities there
+    - [ ] cache/refresh selection options more efficiently
+- schema/architecture
+    - [ ] improve relation property creation and retrieval to support the following:
+        - [ ] allow targeting multiple properties from a single class in two-way relationships
+            - [ ] this will require a lot of adjustments to the UI as well
+
+
+Extremely distant horizon:
+- item grid version of class block, with modular display options for properties
+- “hopper” to add new items frictionlessly
+- m o b i l e
+- some mechanism for enforcing hierarchy/nesting (to enable something like file system organization or nested tags)
+
+
+
 #### <span class="date">12/24/2025</span>
 
 So I’m mulling over the challenge I identified yesterday of handling surgical refreshes when an item has been newly created, and I don’t necessarily know its sort position. 
@@ -19,10 +76,6 @@ Next steps:
 - [x] set up changes to text cells to actually update the database
 - [x] modify mission_control.edit_relations to refresh newly created items in addition to existing ones
     - [x] may require modifying `edit_relations` in goby-database to return its input including the newly created IDs
-
-To explore:
-- [ ] entry/exit animation for options overlay
-
 
 I’m now realizing `mission_control.edit_relations` will take some more sophisticated refactoring - currently I’m surgically deciding which items need to be reloaded, based on which classes are loaded and the assumption that the displaying items will be paginated. If a new item has been added, I have to either:
         - come up with a surefire performant way of knowing whether the new item is within the page currently displaying

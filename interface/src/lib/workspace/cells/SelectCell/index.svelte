@@ -386,7 +386,7 @@
         grid-template-rows: min-content min-content;
         grid-template-areas:'value'
                             'edit';
-        gap:2px;
+        gap:4px;
         
         --option-gap:8px;
     }
